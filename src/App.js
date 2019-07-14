@@ -21,7 +21,6 @@ import "@material/card/dist/mdc.card.css";
 class Bookmark extends React.Component {
     constructor(props) {
         super(props);
-        this.bookmarkRef = React.createRef();
     }
 
     render () {
@@ -122,6 +121,45 @@ class BookmarksList extends React.Component {
         this.bookmarks[intCursor].link = this.state.tmplink;
         this.bookmarks[intCursor].description = this.state.tmpdescription;
         this.saveBookmarks ();
+
+    }
+
+    about() {
+        const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#about'));
+        dialog.open();
+    }
+
+    saveBookmarks () {
+        let newBookmarks = [];
+
+        // Save in current state.
+        this.setState({
+            bookmarks: this.state.bookmarks
+        });
+
+        // Save in local storage, skipping deleted bookmarks.
+        for (let i = 0; i < this.bookmarks.length; i++) {
+            if (this.bookmarks[i].visible) {
+                newBookmarks.push (this.bookmarks[i]);
+            }
+        }
+        localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
+        
+        if (process.env.NODE_ENV === 'development') {
+            console.log("--- saveBookmarks:");
+            console.log(this.state.bookmarks);
+            console.log("--- mid");
+            console.log(this.bookmarks);
+            console.log("--- at end of saveBookmarks");
+        }
+    }
+
+    handleSubmit(cursor) {
+        let intCursor = parseInt(cursor);
+        this.bookmarks[intCursor].title = this.state.tmptitle;
+        this.bookmarks[intCursor].link = this.state.tmplink;
+        this.bookmarks[intCursor].description = this.state.tmpdescription;
+        this.saveBookmarks ();
         this.forceUpdate();
     }
 
@@ -179,7 +217,7 @@ class BookmarksList extends React.Component {
     }
 
     render () {
-        let bookmarksCount = this.state.bookmarks.length;
+        let bookmarksCount = this.bookmarks.length;
         let bookmarksRepresentation = [];
         for (let i = 0; i < bookmarksCount; i++) {
             if (this.bookmarks[i].visible) {
@@ -187,11 +225,10 @@ class BookmarksList extends React.Component {
                     <Bookmark
                       id={i.toString()}
                       key={"Bookmark" + i}
-                      title={this.state.bookmarks[i].title}
-                      link={this.state.bookmarks[i].link}
-		      description={this.state.bookmarks[i].description}
+                      title={this.bookmarks[i].title}
+                      link={this.bookmarks[i].link}
+		      description={this.bookmarks[i].description}
                       editBookmark={this.editBookmark}
-                      bookmarksListRef={this.bookmarksListRef}
                     />);
             }
         }
