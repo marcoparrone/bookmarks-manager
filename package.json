@@ -1,0 +1,56 @@
+{
+			"name": "bookmarks-manager",
+			"version": "0.1.0",
+			"homepage": "https://marcoparrone.github.io/bookmarks-manager",
+			"private": true,
+			"bugs": {
+						"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
+						"email": "marco.parrone@gmail.com"
+			},
+			"license": "MIT",
+			"dependencies": {
+						"@material-ui/core": "^4.2.0",
+						"@material-ui/icons": "^4.2.1",
+						"@material/card": "^3.0.0",
+						"@material/dialog": "^3.0.0",
+						"@material/react-material-icon": "^0.14.1",
+						"@material/react-top-app-bar": "^0.14.1",
+						"@material/snackbar": "^3.0.0",
+						"@material/theme": "^3.0.0",
+						"@material/top-app-bar": "^3.0.0",
+						"@types/classnames": "^2.2.9",
+						"@types/node": "^12.6.2",
+						"@types/react": "^16.8.23",
+						"@types/react-dom": "^16.8.4",
+						"gh-pages": "^2.0.1",
+						"lodash": ">=4.17.14",
+						"lodash.template": ">=4.5.0",
+						"react": "^16.8.6",
+						"react-dom": "^16.8.6",
+						"react-scripts": "3.0.1",
+						"typescript": "^3.5.3"
+			},
+			"scripts": {
+						"predeploy": "npm run build",
+						"deploy": "gh-pages -d build",
+						"start": "react-scripts start",
+						"build": "react-scripts build",
+						"test": "react-scripts test",
+						"eject": "react-scripts eject"
+			},
+			"eslintConfig": {
+						"extends": "react-app"
+			},
+			"browserslist": {
+						"production": [
+									">0.2%",
+									"not dead",
+									"not op_mini all"
+						],
+						"development": [
+									"last 1 chrome version",
+									"last 1 firefox version",
+									"last 1 safari version"
+						]
+			}
+}
