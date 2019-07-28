@@ -48,3 +48,11 @@ section.bookmarksSection {
 .card-body {
     padding: 16px;
 }
+
+.hidden {
+    display: none;
+}
+
+.center-text {
+    vertical-align: center;
+}

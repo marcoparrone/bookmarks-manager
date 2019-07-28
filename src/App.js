@@ -18,29 +18,72 @@ import {MDCDialog} from '@material/dialog';
 
 import "@material/card/dist/mdc.card.css";
 
+import "@fortawesome/fontawesome-free/css/all.css";
+
+import parse from 'bookmarks-parser';
+
+import saveAs from 'file-saver';
+
 class Bookmark extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render () {
-        return (
+        let content = [];
+        let count = 0;
+        let element = null;
+        let keyprefix = "Bookmark" + this.props.id;
+        if (this.props.type === 'bookmark') {
+            content.push (<label key={keyprefix}>{this.props.title}&nbsp;
+                            <button
+                              aria-pressed="false"
+                              aria-label="Open"
+                              title="Open"
+                              onClick={event => window.open(this.props.url)}>
+                              <i className="material-icons mdc-icon-button__icon">open_in_new</i>
+                            </button>
+                          </label>);
+        } else {
+            content.push(<label key={keyprefix + "Label"}>{this.props.title}: </label>);
 
-	    <div className="mdc-card  mdc-card--outlined">
-              <div className="card-header">
-                <div className="card-title">
-                  <h2 className="mdc-typography--headline6">{this.props.title}</h2>
-                </div>
-                <div className="mdc-card__media mdc-card__media--square">
-                  <div className="mdc-card__media-content"></div>
-                </div>
-              </div>
-              <div className="card-body mdc-typography--body2">{this.props.description}</div>
-              <div className="mdc-card__actions">
-                <div className="mdc-card__action-buttons">
-                  <button className="mdc-button mdc-card__action mdc-card__action--button" onClick={event => window.open(this.props.link)}>Open</button>
-                  <button className="mdc-button mdc-card__action mdc-card__action--button" onClick={event => this.props.editBookmark(this.props.id)}>Edit</button>
-                </div>
+            content.push(<br key={keyprefix + "Br"}/>);
+
+            if (this.props.children !== undefined && this.props.children !== null && this.props.children !== []) {
+                count = this.props.children.length;
+                for (let i = 0; i < count; i++) {
+                    element = this.props.children[i];
+                    if (element.visible !== false) {
+                        content.push(<Bookmark
+                                       id={this.props.id + "." + i.toString()}
+                                       key={keyprefix + "." + i.toString()}
+                                       type={element.type}
+                                       title={element.title}
+                                       url={element.url}
+                                       children={element.children}
+                                       addBookmark={this.props.addBookmark}                                   
+                                       editBookmark={this.props.editBookmark}
+                                     />);
+                    }
+                }
+            }
+
+            content.push(<button
+                           key={keyprefix + "AddButton"}
+                           aria-pressed="false"
+                           aria-label="Add"
+                           title="Add"
+                           onClick={event => this.props.addBookmark(this.props.id)}>
+                           <i className="material-icons mdc-icon-button__icon">add</i>
+                         </button>);
+            
+        }
+        return (
+	    <div className="mdc-card  mdc-card--outlined" key={keyprefix + "Card"}>
+              <div className="card-body mdc-typography--body2">{content}&nbsp;
+                <button 
+                        aria-pressed="false"
+                        aria-label="Edit"
+                        title="Edit"
+                        onClick={event => this.props.editBookmark(this.props.id)}>
+                  <i className="material-icons mdc-icon-button__icon">edit</i>
+                </button>
               </div>
             </div>
         );
@@ -56,19 +99,20 @@ class BookmarksList extends React.Component {
         this.state = {
             bookmarks: [],
             cursor: -1,
+            tmptype: 'bookmark',
             tmptitle: "",
-            tmplink: "",
-            tmpdescription: ""
+            tmpurl: ""
         };
         this.deleteBookmark = this.deleteBookmark.bind(this);
-        this.editBookmark = this.editBookmark.bind(this);
         this.addBookmark = this.addBookmark.bind(this);
+        this.editBookmark = this.editBookmark.bind(this);
         this.about = this.about.bind(this);
-        this.addbk = this.addbk.bind(this);
-        this.addbk = this.addbk.bind(this);
+        this.importExportBookmarks = this.importExportBookmarks.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        
+        this.importBookmarksReaderOnload = this.importBookmarksReaderOnload.bind(this);
+        this.importBookmarks = this.importBookmarks.bind(this);
+        this.exportBookmarks = this.exportBookmarks.bind(this);
         this.bookmarksListRef = React.createRef();
     }
 
@@ -80,9 +124,9 @@ class BookmarksList extends React.Component {
         
     }
 
-    addbk() {
-        this.addBookmark();
-        this.editBookmark(this.bookmarks.length - 1);
+    importExportBookmarks() {
+        const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#impexp'));
+        dialog.open();
     }
 
     about() {
@@ -116,49 +160,17 @@ class BookmarksList extends React.Component {
     }
 
     handleSubmit(cursor) {
-        let intCursor = parseInt(cursor);
-        this.bookmarks[intCursor].title = this.state.tmptitle;
-        this.bookmarks[intCursor].link = this.state.tmplink;
-        this.bookmarks[intCursor].description = this.state.tmpdescription;
-        this.saveBookmarks ();
-
-    }
-
-    about() {
-        const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#about'));
-        dialog.open();
-    }
-
-    saveBookmarks () {
-        let newBookmarks = [];
-
-        // Save in current state.
-        this.setState({
-            bookmarks: this.state.bookmarks
-        });
-
-        // Save in local storage, skipping deleted bookmarks.
-        for (let i = 0; i < this.bookmarks.length; i++) {
-            if (this.bookmarks[i].visible) {
-                newBookmarks.push (this.bookmarks[i]);
-            }
+        let newCursor = cursor.split(".");
+        let bookmark = null;
+        if (newCursor.length > 0) {
+            bookmark = this.bookmarks[newCursor[0]];
         }
-        localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
-        
-        if (process.env.NODE_ENV === 'development') {
-            console.log("--- saveBookmarks:");
-            console.log(this.state.bookmarks);
-            console.log("--- mid");
-            console.log(this.bookmarks);
-            console.log("--- at end of saveBookmarks");
+        for (let i = 1; i < newCursor.length; i++) {
+            bookmark=bookmark.children[newCursor[i]];
         }
-    }
-
-    handleSubmit(cursor) {
-        let intCursor = parseInt(cursor);
-        this.bookmarks[intCursor].title = this.state.tmptitle;
-        this.bookmarks[intCursor].link = this.state.tmplink;
-        this.bookmarks[intCursor].description = this.state.tmpdescription;
+        bookmark.title = this.state.tmptitle;
+        bookmark.type = this.state.tmptype;
+        bookmark.url = this.state.tmpurl;
         this.saveBookmarks ();
         this.forceUpdate();
     }
@@ -186,34 +198,158 @@ class BookmarksList extends React.Component {
         }
     }
 
-    addBookmark() {
-        let last = this.bookmarks.length;
-        let newBookmark = {
-	    title: "ExampleTitle" + last.toString(),
-	    link: "https://example.example",
-	    description: "ExampleDescription" + last.toString(),
+    addBookmark(cursor) {
+        let oldCursor = [];
+        let newCursor = [];
+        let bookmark = null;
+        let bookmarks = [];
+        let newBookmark = null;
+        if (cursor === undefined || cursor === null) {
+            newCursor = this.bookmarks.length.toString();
+            bookmarks = this.bookmarks;
+        } else {
+            oldCursor = cursor.split(".");
+            if (oldCursor.length > 0) {
+                bookmarks = this.bookmarks;
+                bookmark = bookmarks[oldCursor[0]];
+                newCursor.push(oldCursor[0]);
+            }
+            for (let i = 1; i < oldCursor.length; i++) {
+                bookmarks=bookmark.children;
+                bookmark=bookmarks[oldCursor[i]];
+                newCursor.push(oldCursor[i]);
+            }
+            if (bookmark.children === undefined || bookmark.childred === null) {
+                bookmark.children = [];
+            }
+            bookmarks = bookmark.children;
+            newCursor.push((bookmark.children.length).toString());
+            newCursor = newCursor.concat().join('.');
+        }
+        newBookmark = {
+            type: 'bookmark',
+	    title: "ExampleTitle" + newCursor,
+	    url: "https://example.example",
             visible: true
         };
-        this.bookmarks.push(newBookmark);
+        bookmarks.push(newBookmark);
         this.saveBookmarks ();
+        this.editBookmark(newCursor);
     }
 
     editBookmark(cursor) {
+        let oldCursor = cursor.split(".");
+        let bookmark = null;
+        if (oldCursor.length > 0) {
+            bookmark = this.bookmarks[oldCursor[0]];
+        }
+        for (let i = 1; i < oldCursor.length; i++) {
+            bookmark=bookmark.children[oldCursor[i]];
+        }
         this.setState({
             cursor: cursor,
-            tmptitle: this.bookmarks[cursor].title,
-            tmplink: this.bookmarks[cursor].link,
-            tmpdescription: this.bookmarks[cursor].description
+            tmptype: bookmark.type,
+            tmptitle: bookmark.title,
+            tmpurl: bookmark.url
         });
         const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#editbookmark'));
         dialog.open();
     }
 
-    deleteBookmark (id) {
-        let intID = parseInt(id);
-        this.bookmarks[intID].visible = false;
+    deleteBookmark (cursor) {
+        let oldCursor = cursor.split(".");
+        let bookmark = null;
+        if (oldCursor.length > 0) {
+            bookmark = this.bookmarks[oldCursor[0]];
+        }
+        for (let i = 1; i < oldCursor.length; i++) {
+            bookmark=bookmark.children[oldCursor[i]];
+        }
+        bookmark.visible = false;
         this.forceUpdate();
         this.saveBookmarks ();
+    }
+
+    importBookmarksReaderOnload (e) {
+        let newBookmarks = [];
+        parse(e.target.result,
+              function(err, res) {
+                  if (err)
+                  {
+                      alert ('error loading file: ' + err);
+                  } else {
+                      for (let i = 0; i < res.bookmarks.length; i++) {
+                          newBookmarks.push (res.bookmarks[i]);
+                      }
+                  }
+              });
+        if (newBookmarks.length > 0) {
+            // Empty bookmarks array from old entries.
+            let oldCount = this.bookmarks.length;
+            for (let i = 0; i < oldCount; i++) {
+                this.bookmarks.pop();
+            }
+            // Populate bookmarks array with new imported items.
+            for (let i = 0; i < newBookmarks.length; i++) {
+                newBookmarks[i].visible = true;
+                this.bookmarks.push(newBookmarks[i]);
+            }
+            // Save and display.
+            this.saveBookmarks ();
+            this.forceUpdate();
+        }
+    }
+    
+    importBookmarks (e) {
+        let file = e.target.files[0];
+        if (! file) {
+            if (e.target.files.length > 0) {
+                alert ('error: cannot load file.');
+            }
+            return;
+        }
+        let reader = new FileReader();
+        reader.onload = this.importBookmarksReaderOnload;
+        reader.readAsText(file);
+    }
+    
+    exportBookmarksHelper (bookmarks) {
+        let bookmarksCount = bookmarks.length;
+        let netscapeBookmarks = [];
+        for (let i = 0; i < bookmarksCount; i++) {
+            if (bookmarks[i].visible !== false) {
+                if (bookmarks[i].type !== 'bookmark') {
+                    netscapeBookmarks.push("<DT><H3>" + bookmarks[i].title + "</H3>");
+                    netscapeBookmarks.push("<DL><p>");
+                    if (bookmarks[i].children !== undefined && bookmarks[i].children !== null && bookmarks[i].children !== []) {
+                        netscapeBookmarks.push(this.exportBookmarksHelper(bookmarks[i].children));
+                    }
+                    netscapeBookmarks.push("</DL><p>");
+                } else {
+                    netscapeBookmarks.push("<DT><A HREF=\"" + bookmarks[i].url + "\">" + bookmarks[i].title + "</A>");
+                    
+                }
+            }
+        }
+        return netscapeBookmarks.join('\n');
+    }
+
+    exportBookmarks () {
+        let netscapeBookmarks = [
+            '<!DOCTYPE NETSCAPE-Bookmark-file-1>',
+            '<!-- This is an automatically generated file.',
+            '     It will be read and overwritten.',
+            '     DO NOT EDIT! -->',
+            '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
+            '<TITLE>Bookmarks</TITLE>',
+            '<H1>Bookmarks</H1>',
+            '',
+            '<DL><p>'
+        ];
+        netscapeBookmarks.push(this.exportBookmarksHelper(this.bookmarks));
+        netscapeBookmarks.push('</DL><p>');
+        saveAs(new Blob([netscapeBookmarks.join('\n')], {type: "text/plain;charset=utf-8"}),
+               "bookmarks.html");
     }
 
     render () {
@@ -225,9 +361,11 @@ class BookmarksList extends React.Component {
                     <Bookmark
                       id={i.toString()}
                       key={"Bookmark" + i}
+                      type={this.bookmarks[i].type}
                       title={this.bookmarks[i].title}
-                      link={this.bookmarks[i].link}
-		      description={this.bookmarks[i].description}
+                      url={this.bookmarks[i].url}
+                      children={this.bookmarks[i].children}
+                      addBookmark={this.addBookmark}
                       editBookmark={this.editBookmark}
                     />);
             }
@@ -245,7 +383,15 @@ class BookmarksList extends React.Component {
                         aria-label="add a bookmark" 
                         hasRipple 
                         icon='add' 
-                        onClick={() => this.addbk()}
+                        onClick={() => this.addBookmark()}
+                      />
+                    </TopAppBarIcon>
+                    <TopAppBarIcon actionItem tabIndex={0}>
+                      <MaterialIcon 
+                        aria-label="import and export bookmarks" 
+                        hasRipple 
+                        icon='import_export' 
+                        onClick={() => this.importExportBookmarks()}
                       />
                     </TopAppBarIcon>
                     <TopAppBarIcon actionItem tabIndex={0}>
@@ -270,6 +416,23 @@ class BookmarksList extends React.Component {
                     <div className="mdc-dialog__surface">
                       <h2 className="mdc-dialog__title" id="editbookmark-dialog-title">Edit bookmark</h2>
                       <div className="mdc-dialog__content" id="editbookmark-dialog-content">
+
+                        <label>Type:
+                          <input type="radio"
+                                 id="abktypebookmark"
+                                 name="tmptype"
+                                 value="bookmark"
+                                 checked={this.state.tmptype === 'bookmark'}
+                                 onChange={this.handleInputChange}>
+                          </input>bookmark
+                          <input type="radio"
+                                 id="abktypefolder"
+                                 name="tmptype"
+                                 value="folder"
+                                 checked={this.state.tmptype === 'folder'}
+                                 onChange={this.handleInputChange}>
+                          </input>folder
+                        </label><br />
                         <label>Title:
                           <input type="text"
                                  id="abktitle"
@@ -278,22 +441,16 @@ class BookmarksList extends React.Component {
                                  onChange={this.handleInputChange}>
                           </input>
                         </label><br />
-                        <label>Link:
-                          <input type="text"
-                                 id="abklink"
-                                 name="tmplink"
-                                 value={this.state.tmplink}
-                                 onChange={this.handleInputChange}>
-                          </input>
-                        </label><br />
-                        <label>Description:
-                          <input type="text"
-                                 id="abkdescription"
-                                 name="tmpdescription"
-                                 value={this.state.tmpdescription}
-                                 onChange={this.handleInputChange}>
-                          </input>
-                        </label>
+                        {this.state.tmptype === 'bookmark' &&
+                         <label>URL:
+                           <input type="text"
+                                  id="abkurl"
+                                  name="tmpurl"
+                                  value={this.state.tmpurl}
+                                  onChange={this.handleInputChange}>
+                           </input>
+                         </label>
+                        }
                       </div>
                       <footer className="mdc-dialog__actions">
                         <input type="submit" value="Delete" onClick={event => this.deleteBookmark(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
@@ -302,41 +459,60 @@ class BookmarksList extends React.Component {
                       </footer>
                     </div>
                   </div>
-                  
                 </div>
 
-              <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="about">
-                <div className="mdc-dialog__container">
-                  <div className="mdc-dialog__surface">
-                    <h2 className="mdc-dialog__title" id="about-dialog-title">About</h2>
-                    <div className="mdc-dialog__content" id="about-dialog-content">
-                      <p>Copyright &copy; 2019 Marco Parrone</p>
-                      <p>Permission is hereby granted, free of charge, to any person obtaining a copy
-                        of this software and associated documentation files (the "Software"), to deal
-                        in the Software without restriction, including without limitation the rights
-                        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                        copies of the Software, and to permit persons to whom the Software is
-                        furnished to do so, subject to the following conditions:</p>
-                      <p>The above copyright notice and this permission notice shall be included in all
-                        copies or substantial portions of the Software.</p>
-                      <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                        SOFTWARE.</p>
+                <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="impexp">
+                  <div className="mdc-dialog__container">
+                    <div className="mdc-dialog__surface">
+                      <h2 className="mdc-dialog__title" id="impexp-dialog-title">Import/export</h2>
+                      <div className="mdc-dialog__content" id="impexp-dialog-content">
+                        <p>Here you can import and export your bookmarks in Netscape format.</p>
+                      </div>
+                      <footer className="mdc-dialog__actions">
+                        <label>Import:&nbsp;<input type="file" onChange={e => this.importBookmarks(e)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></label>
+                        <input type="submit" value="Back" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />                       
+                        <input type="submit" value="Export" onClick={event => this.exportBookmarks()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                      </footer>
                     </div>
-                    <footer className="mdc-dialog__actions">
-                      <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-                        <span className="mdc-button__label">Close</span>
-                      </button>
-                    </footer>
                   </div>
                 </div>
-                <div className="mdc-dialog__scrim"></div>
-              </div>
-	    </TopAppBarFixedAdjust>
+
+                
+                <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="about">
+                  <div className="mdc-dialog__container">
+                    <div className="mdc-dialog__surface">
+                      <h2 className="mdc-dialog__title" id="about-dialog-title">About</h2>
+                      <div className="mdc-dialog__content" id="about-dialog-content">
+                        <p>Copyright &copy; 2019 Marco Parrone</p>
+                        <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+                          of this software and associated documentation files (the "Software"), to deal
+                          in the Software without restriction, including without limitation the rights
+                          to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                          copies of the Software, and to permit persons to whom the Software is
+                          furnished to do so, subject to the following conditions:</p>
+                        <p>The above copyright notice and this permission notice shall be included in all
+                          copies or substantial portions of the Software.</p>
+                        <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                          IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                          FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                          AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                          LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                          OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                          SOFTWARE.</p>
+                        
+                        <p><i className="fa fa-envelope fa-fw"> </i> Email: <a href="mailto:marco.parrone@gmail.com">marco.parrone@gmail.com</a><br />
+                          <i className="fab fa-github fa-fw"> </i> Github: <a href="https://github.com/marcoparrone/bookmarks-manager">https://github.com/marcoparrone/bookmarks-manager</a></p>
+                      </div>
+                      <footer className="mdc-dialog__actions">
+                        <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
+                          <span className="mdc-button__label">Close</span>
+                        </button>
+                      </footer>
+                    </div>
+                  </div>
+                  <div className="mdc-dialog__scrim"></div>
+                </div>
+	      </TopAppBarFixedAdjust>
             </div>
         );
     }
