@@ -9,7 +9,7 @@
 			},
 			"license": "MIT",
 			"dependencies": {
-						"@material-ui/core": "^4.9.9",
+						"@material-ui/core": "^4.9.10",
 						"@material-ui/icons": "^4.9.1",
 						"@material/card": "^5.1.0",
 						"@material/dialog": "^5.1.0",
@@ -29,6 +29,7 @@
 						"jsdom": "^16.2.2",
 						"lodash": ">=4.17.15",
 						"lodash.template": ">=4.5.0",
+						"patch-package": "^6.2.2",
 						"react": "^16.13.1",
 						"react-dom": "^16.13.1",
 						"react-scripts": "3.4.1",
@@ -40,7 +41,8 @@
 						"start": "react-scripts start",
 						"build": "react-scripts build",
 						"test": "react-scripts test",
-						"eject": "react-scripts eject"
+						"eject": "react-scripts eject",
+						"postinstall": "patch-package"
 			},
 			"eslintConfig": {
 						"extends": "react-app"
