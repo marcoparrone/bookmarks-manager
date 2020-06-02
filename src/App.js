@@ -18,8 +18,6 @@ import {MDCDialog} from '@material/dialog';
 
 import "@material/card/dist/mdc.card.css";
 
-import "@fortawesome/fontawesome-free/css/all.css";
-
 import parse from 'bookmarks-parser';
 
 import saveAs from 'file-saver';
@@ -500,8 +498,8 @@ class BookmarksList extends React.Component {
                           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                           SOFTWARE.</p>
                         
-                        <p><i className="fa fa-envelope fa-fw"> </i> Email: <a href="mailto:marco.parrone@gmail.com">marco.parrone@gmail.com</a><br />
-                          <i className="fab fa-github fa-fw"> </i> Github: <a href="https://github.com/marcoparrone/bookmarks-manager">https://github.com/marcoparrone/bookmarks-manager</a></p>
+                        <p>Email: <a href="mailto:marco.parrone@gmail.com">marco.parrone@gmail.com</a><br />
+                          Github: <a href="https://github.com/marcoparrone/bookmarks-manager">https://github.com/marcoparrone/bookmarks-manager</a></p>
                       </div>
                       <footer className="mdc-dialog__actions">
                         <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
