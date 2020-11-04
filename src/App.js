@@ -498,7 +498,7 @@ class BookmarksList extends React.Component {
                           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                           SOFTWARE.</p>
                         
-                        <p>Email: <a href="mailto:marco.parrone@gmail.com">marco.parrone@gmail.com</a><br />
+                        <p>Email: <a href="mailto:marco@marcoparrone.com">marco@marcoparrone.com</a><br />
                           Github: <a href="https://github.com/marcoparrone/bookmarks-manager">https://github.com/marcoparrone/bookmarks-manager</a></p>
                       </div>
                       <footer className="mdc-dialog__actions">
