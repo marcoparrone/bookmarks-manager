@@ -16,12 +16,7 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-scheme-background:black;
-        --color-scheme-text-color:white;
-	--mdc-theme-primary:white;
-	--mdc-theme-secondary:yellow;
-	--mdc-theme-on-primary:black;
-	--mdc-theme-on-secondary:#777;
+	/* Keep the default values. */
     }
 }
 
