@@ -2,7 +2,7 @@ importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox
 
 // Cache site resources but update in the background.
 workbox.routing.registerRoute(
-  /.marcoparrone\.github\.io/,
+  /.*marcoparrone\.github\.io/,
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'mparrone',
   })
