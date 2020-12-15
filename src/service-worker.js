@@ -6,9 +6,24 @@ import {StaleWhileRevalidate} from 'workbox-strategies';
 // Use the imported Workbox libraries to implement caching,
 // routing, and other logic:
 precacheAndRoute(self.__WB_MANIFEST);
+
 registerRoute(
   /.*marcoparrone\.com/,
   new StaleWhileRevalidate({
     cacheName: 'marcoparrone',
+  })
+);
+
+registerRoute(
+  /.*(?:googleapis)\.com/,
+  new StaleWhileRevalidate({
+    cacheName: 'googleapis',
+  })
+);
+
+registerRoute(
+  /.*(?:gstatic)\.com/,
+  new StaleWhileRevalidate({
+    cacheName: 'gstatic',
   })
 );
