@@ -25,7 +25,6 @@
 						"async": "^3.2.0",
 						"bookmarks-parser": "^1.5.0",
 						"file-saver": "^2.0.5",
-						"gh-pages": "^3.1.0",
 						"jsdom": "^16.4.0",
 						"lodash": ">=4.17.20",
 						"lodash.template": ">=4.5.0",
@@ -37,7 +36,7 @@
 			},
 			"scripts": {
 						"predeploy": "npm run build",
-						"deploy": "gh-pages -d build",
+						"deploy": "mydeploy.sh bookmarks-manager",
 						"start": "webpack --config webpack.dev.js && react-scripts start",
 						"build": "webpack --config webpack.prod.js && react-scripts build",
 						"test": "react-scripts test",
