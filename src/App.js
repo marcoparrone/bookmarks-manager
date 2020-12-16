@@ -106,6 +106,7 @@ class BookmarksList extends React.Component {
         this.addBookmark = this.addBookmark.bind(this);
         this.editBookmark = this.editBookmark.bind(this);
         this.about = this.about.bind(this);
+        this.help = this.help.bind(this);
         this.importExportBookmarks = this.importExportBookmarks.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -125,6 +126,11 @@ class BookmarksList extends React.Component {
 
     importExportBookmarks() {
         const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#impexp'));
+        dialog.open();
+    }
+
+    help() {
+        const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#help'));
         dialog.open();
     }
 
@@ -404,10 +410,18 @@ class BookmarksList extends React.Component {
                       />
                     </TopAppBarIcon>
                     <TopAppBarIcon actionItem tabIndex={0}>
-                      <MaterialIcon 
-                        aria-label="about" 
-                        hasRipple 
-                        icon='help' 
+                      <MaterialIcon
+                        aria-label="help"
+                        hasRipple
+                        icon='help'
+                        onClick={() => this.help()}
+			/>
+		    </TopAppBarIcon>
+                    <TopAppBarIcon actionItem tabIndex={0}>
+                      <MaterialIcon
+                        aria-label="about"
+                        hasRipple
+                        icon='info'
                         onClick={() => this.about()}
                       />
                     </TopAppBarIcon>
@@ -486,13 +500,34 @@ class BookmarksList extends React.Component {
                   </div>
                 </div>
 
+		<div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="help">
+                  <div className="mdc-dialog__container">
+                    <div className="mdc-dialog__surface">
+                      <h2 className="mdc-dialog__title" id="help-dialog-title">Help</h2>
+                      <div className="mdc-dialog__content" id="help-dialog-content">
+			<p>This is a bookmarks manager.</p>
+                        <p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
+                        <p>Press on the "open" button near a bookmark to open the related URL, or press edit to modify it.</p>
+                        <p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers.</p>
+                        <p>For preventing the loss of the bookmarks, it is suggested to make a backup using the "export" functionality.</p>
+                      </div>
+                      <footer className="mdc-dialog__actions">
+                        <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
+                          <span className="mdc-button__label">Close</span>
+                        </button>
+                      </footer>
+                    </div>
+                  </div>
+                  <div className="mdc-dialog__scrim"></div>
+                </div>
+
                 
                 <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="about">
                   <div className="mdc-dialog__container">
                     <div className="mdc-dialog__surface">
                       <h2 className="mdc-dialog__title" id="about-dialog-title">About</h2>
                       <div className="mdc-dialog__content" id="about-dialog-content">
-                        <p>Copyright &copy; 2019 Marco Parrone</p>
+                        <p>Copyright &copy; 2019,2020 Marco Parrone</p>
                         <p>Permission is hereby granted, free of charge, to any person obtaining a copy
                           of this software and associated documentation files (the "Software"), to deal
                           in the Software without restriction, including without limitation the rights
@@ -508,9 +543,7 @@ class BookmarksList extends React.Component {
                           LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                           SOFTWARE.</p>
-                        
-                        <p>Email: <a href="mailto:marco@marcoparrone.com">marco@marcoparrone.com</a><br />
-                          Github: <a href="https://github.com/marcoparrone/bookmarks-manager">https://github.com/marcoparrone/bookmarks-manager</a></p>
+                        <p>Website: <a href="https://marcoparrone.com">https://marcoparrone.com</a></p>
                       </div>
                       <footer className="mdc-dialog__actions">
                         <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
@@ -521,6 +554,7 @@ class BookmarksList extends React.Component {
                   </div>
                   <div className="mdc-dialog__scrim"></div>
                 </div>
+
 	      </TopAppBarFixedAdjust>
             </div>
         );
