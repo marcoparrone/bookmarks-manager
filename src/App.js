@@ -508,7 +508,7 @@ class BookmarksList extends React.Component {
 			<p>This is a bookmarks manager.</p>
                         <p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
                         <p>Press on the "open" button near a bookmark to open the related URL, or press edit to modify it.</p>
-                        <p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers.</p>
+                        <p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers. When importing the bookmarks from a file, the current bookmarks will be deleted and overwritten.</p>
                         <p>For preventing the loss of the bookmarks, it is suggested to make a backup using the "export" functionality.</p>
                       </div>
                       <footer className="mdc-dialog__actions">
