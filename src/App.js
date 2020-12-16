@@ -318,15 +318,26 @@ class BookmarksList extends React.Component {
         for (let i = 0; i < bookmarksCount; i++) {
             if (bookmarks[i].visible !== false) {
                 if (bookmarks[i].type !== 'bookmark') {
-                    netscapeBookmarks.push("<DT><H3>" + bookmarks[i].title + "</H3>");
-                    netscapeBookmarks.push("<DL><p>");
+                    if (bookmarks[i].ns_root === 'toolbar'){
+                        netscapeBookmarks.push("<DT><H3 PERSONAL_TOOLBAR_FOLDER=\"true\">" + bookmarks[i].title + "</H3>");
+                    } else if (bookmarks[i].ns_root === 'unsorted') {
+                        netscapeBookmarks.push("<DT><H3 UNFILED_BOOKMARKS_FOLDER=\"true\">" + bookmarks[i].title + "</H3>");
+                    } else if (bookmarks[i].ns_root === 'menu') {
+                        // Don't print it - this menu was added by the parser.
+                    } else {
+                        netscapeBookmarks.push("<DT><H3>" + bookmarks[i].title + "</H3>");
+                    }
+                    if (bookmarks[i].ns_root !== 'menu') {
+                        netscapeBookmarks.push("<DL><p>");
+                    }
                     if (bookmarks[i].children !== undefined && bookmarks[i].children !== null && bookmarks[i].children !== []) {
                         netscapeBookmarks.push(this.exportBookmarksHelper(bookmarks[i].children));
                     }
-                    netscapeBookmarks.push("</DL><p>");
+                    if (bookmarks[i].ns_root !== 'menu') {
+                        netscapeBookmarks.push("</DL><p>");
+                    }
                 } else {
                     netscapeBookmarks.push("<DT><A HREF=\"" + bookmarks[i].url + "\">" + bookmarks[i].title + "</A>");
-                    
                 }
             }
         }
@@ -346,7 +357,6 @@ class BookmarksList extends React.Component {
             '<DL><p>'
         ];
         netscapeBookmarks.push(this.exportBookmarksHelper(this.bookmarks));
-        netscapeBookmarks.push('</DL><p>');
         saveAs(new Blob([netscapeBookmarks.join('\n')], {type: "text/plain;charset=utf-8"}),
                "bookmarks.html");
     }
