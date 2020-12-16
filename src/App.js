@@ -30,13 +30,14 @@ class Bookmark extends React.Component {
         let keyprefix = "Bookmark" + this.props.id;
         if (this.props.type === 'bookmark') {
             content.push (<label key={keyprefix}>{this.props.title}&nbsp;
-                            <button
-                              aria-pressed="false"
-                              aria-label="Open"
-                              title="Open"
-                              onClick={event => window.open(this.props.url)}>
-                              <i className="material-icons mdc-icon-button__icon">open_in_new</i>
-                            </button>
+                            <a href={this.props.url} target="_blank" rel="noreferrer">
+                              <button
+                                aria-pressed="false"
+                                aria-label="Open"
+                                title="Open">
+                                <i className="material-icons mdc-icon-button__icon">open_in_new</i>
+                              </button>
+                            </a>
                           </label>);
         } else {
             content.push(<label key={keyprefix + "Label"}>{this.props.title}: </label>);
