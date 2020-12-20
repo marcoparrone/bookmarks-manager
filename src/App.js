@@ -97,12 +97,15 @@ class BookmarksList extends React.Component {
     super(props);
     this.bookmarks = [];
     this.cursor = -1;
+    this.tmptype = 'bookmark';
+    this.tmptitle = '';
+    this.tmpurl = '';
     this.state = {
-      bookmarks: [],
-      cursor: -1,
-      tmptype: 'bookmark',
-      tmptitle: "",
-      tmpurl: ""
+      bookmarks: this.bookmarks,
+      cursor: this.cursor,
+      tmptype: this.tmptype,
+      tmptitle: this.tmptitle,
+      tmpurl: this.tmpurl
     };
     this.deleteBookmark = this.deleteBookmark.bind(this);
     this.addBookmark = this.addBookmark.bind(this);
@@ -153,7 +156,11 @@ class BookmarksList extends React.Component {
 
     // Save in current state.
     this.setState({
-      bookmarks: this.state.bookmarks
+      bookmarks: this.state.bookmarks,
+      cursor: this.cursor,
+      tmptype: this.tmptype,
+      tmptitle: this.tmptitle,
+      tmpurl: this.tmpurl
     });
 
     // Save in local storage, skipping deleted bookmarks.
@@ -178,19 +185,28 @@ class BookmarksList extends React.Component {
     bookmark.type = this.state.tmptype;
     bookmark.url = this.state.tmpurl;
     this.saveBookmarks();
-    this.forceUpdate();
   }
 
-  handleInputChange(event) {
-    const target = event.target;
-    const value =
-      target.type === 'checkbox'
-        ? target.checked
-        : target.value;
-    const name = target.name;
-
+  handleInputChange(e) {
+    switch (e.target.name) {
+      case 'tmptype':
+        this.tmptype = e.target.checked;
+        break;
+      case 'tmptitle':
+        this.tmptitle = e.target.value;
+        break;
+      case 'tmpurl':
+        this.tmpurl = e.target.value;
+        break;
+      default:
+        break;
+    }
     this.setState({
-      [name]: value,
+      bookmarks: this.bookmarks,
+      cursor: this.cursor,
+      tmptype: this.tmptype,
+      tmptitle: this.tmptitle,
+      tmpurl: this.tmpurl
     });
   }
 
@@ -199,7 +215,11 @@ class BookmarksList extends React.Component {
     if (bookmarks) {
       this.bookmarks = JSON.parse(bookmarks);
       this.setState({
-        bookmarks: this.bookmarks
+        bookmarks: this.bookmarks,
+        cursor: this.cursor,
+        tmptype: this.tmptype,
+        tmptitle: this.tmptitle,
+        tmpurl: this.tmpurl
       });
     }
   }
@@ -208,27 +228,27 @@ class BookmarksList extends React.Component {
     let oldCursor = [];
     let newCursor = [];
     let bookmark = null;
-    let bookmarks = [];
+    let tmpbookmarks = [];
     let newBookmark = null;
     if (cursor === undefined || cursor === null) {
       newCursor = this.bookmarks.length.toString();
-      bookmarks = this.bookmarks;
+      tmpbookmarks = this.bookmarks;
     } else {
       oldCursor = cursor.split(".");
       if (oldCursor.length > 0) {
-        bookmarks = this.bookmarks;
-        bookmark = bookmarks[oldCursor[0]];
+        tmpbookmarks = this.bookmarks;
+        bookmark = tmpbookmarks[oldCursor[0]];
         newCursor.push(oldCursor[0]);
       }
       for (let i = 1; i < oldCursor.length; i++) {
-        bookmarks = bookmark.children;
-        bookmark = bookmarks[oldCursor[i]];
+        tmpbookmarks = bookmark.children;
+        bookmark = tmpbookmarks[oldCursor[i]];
         newCursor.push(oldCursor[i]);
       }
       if (bookmark.children === undefined || bookmark.childred === null) {
         bookmark.children = [];
       }
-      bookmarks = bookmark.children;
+      tmpbookmarks = bookmark.children;
       newCursor.push((bookmark.children.length).toString());
       newCursor = newCursor.concat().join('.');
     }
@@ -238,7 +258,7 @@ class BookmarksList extends React.Component {
       url: "https://example.example",
       visible: 1
     };
-    bookmarks.push(newBookmark);
+    this.bookmarks.push(newBookmark);
     this.saveBookmarks();
     this.editBookmark(newCursor);
   }
@@ -252,11 +272,16 @@ class BookmarksList extends React.Component {
     for (let i = 1; i < oldCursor.length; i++) {
       bookmark = bookmark.children[oldCursor[i]];
     }
+    this.cursor = cursor;
+    this.tmptype = bookmark.type;
+    this.tmptitle = bookmark.title;
+    this.tmpurl = bookmark.url;
     this.setState({
-      cursor: cursor,
-      tmptype: bookmark.type,
-      tmptitle: bookmark.title,
-      tmpurl: bookmark.url
+      bookmarks: this.bookmarks,
+      cursor: this.cursor,
+      tmptype: this.tmptype,
+      tmptitle: this.tmptitle,
+      tmpurl: this.tmpurl
     });
     const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#editbookmark'));
     dialog.open();
@@ -272,8 +297,8 @@ class BookmarksList extends React.Component {
       bookmark = bookmark.children[oldCursor[i]];
     }
     bookmark.visible = 0;
-    this.forceUpdate();
     this.saveBookmarks();
+    this.forceUpdate();
   }
 
   importBookmarksReaderOnload(e) {
@@ -300,7 +325,13 @@ class BookmarksList extends React.Component {
         this.bookmarks.push(newBookmarks[i]);
       }
       // Save and display.
-      this.saveBookmarks();
+      this.setState({
+        bookmarks: this.bookmarks,
+        cursor: this.cursor,
+        tmptype: this.tmptype,
+        tmptitle: this.tmptitle,
+        tmpurl: this.tmpurl
+      });
       this.forceUpdate();
     }
   }
@@ -368,18 +399,18 @@ class BookmarksList extends React.Component {
   }
 
   render() {
-    let bookmarksCount = this.bookmarks.length;
     let bookmarksRepresentation = [];
-    for (let i = 0; i < bookmarksCount; i++) {
+    for (let i = 0; i < this.state.bookmarks.length; i++) {
       if (this.bookmarks[i].visible !== 0) {
         bookmarksRepresentation.push(
           <Bookmark
             id={i.toString()}
-            key={'Bookmark' + i + ' ' + this.bookmarks[i].visible}
-            type={this.bookmarks[i].type}
-            title={this.bookmarks[i].title}
-            url={this.bookmarks[i].url}
-            children={this.bookmarks[i].children}
+            key={'Bookmark' + i + ' ' + this.state.bookmarks[i].visible}
+            type={this.state.bookmarks[i].type}
+            title={this.state.bookmarks[i].title}
+            url={this.state.bookmarks[i].url}
+            children={this.state.bookmarks[i].children}
+            visible={this.state.bookmarks[i].visible}
             addBookmark={this.addBookmark}
             editBookmark={this.editBookmark}
           />);
