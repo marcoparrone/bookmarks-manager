@@ -190,7 +190,9 @@ class BookmarksList extends React.Component {
   handleInputChange(e) {
     switch (e.target.name) {
       case 'tmptype':
-        this.tmptype = e.target.checked;
+        if (e.target.checked === true) {
+          this.tmptype = e.target.value;
+        }
         break;
       case 'tmptitle':
         this.tmptitle = e.target.value;
