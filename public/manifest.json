@@ -1,5 +1,5 @@
 {
-    "short_name": "Bookmarks Manager",
+    "short_name": "Bookmarks",
     "name": "Bookmarks Manager",
     "icons": [
 	{ "src": "bookmark-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },

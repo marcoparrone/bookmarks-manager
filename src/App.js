@@ -22,6 +22,8 @@ import parse from 'bookmarks-parser';
 
 import saveAs from 'file-saver';
 
+import get_timestamp from './timestamp';
+
 class Bookmark extends React.Component {
     render () {
         let content = [];
@@ -364,7 +366,7 @@ class BookmarksList extends React.Component {
         ];
         netscapeBookmarks.push(this.exportBookmarksHelper(this.bookmarks));
         saveAs(new Blob([netscapeBookmarks.join('\n')], {type: "text/plain;charset=utf-8"}),
-               "bookmarks.html");
+               'bookmarks-' + get_timestamp() + '.html');
     }
 
     render () {
@@ -543,7 +545,6 @@ class BookmarksList extends React.Component {
                           LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                           SOFTWARE.</p>
-                        <p>Website: <a href="https://marcoparrone.com">https://marcoparrone.com</a></p>
                       </div>
                       <footer className="mdc-dialog__actions">
                         <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
@@ -570,7 +571,3 @@ function App() {
 }
 
 export default App;
-
-// Local Variables:
-// mode: rjsx
-// End:
