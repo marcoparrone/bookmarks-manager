@@ -50,7 +50,7 @@ class Bookmark extends React.Component {
         count = this.props.children.length;
         for (let i = 0; i < count; i++) {
           element = this.props.children[i];
-          if (element.visible !== false) {
+          if (element.visible !== 0) {
             content.push(<Bookmark
               id={this.props.id + "." + i.toString()}
               key={keyprefix + "." + i.toString()}
@@ -151,7 +151,7 @@ class BookmarksList extends React.Component {
 
     // Save in local storage, skipping deleted bookmarks.
     for (let i = 0; i < this.bookmarks.length; i++) {
-      if (this.bookmarks[i].visible) {
+      if (this.bookmarks[i].visible !== 0) {
         newBookmarks.push(this.bookmarks[i]);
       }
     }
@@ -237,7 +237,7 @@ class BookmarksList extends React.Component {
       type: 'bookmark',
       title: "ExampleTitle" + newCursor,
       url: "https://example.example",
-      visible: true
+      visible: 1
     };
     bookmarks.push(newBookmark);
     this.saveBookmarks();
@@ -272,7 +272,7 @@ class BookmarksList extends React.Component {
     for (let i = 1; i < oldCursor.length; i++) {
       bookmark = bookmark.children[oldCursor[i]];
     }
-    bookmark.visible = false;
+    bookmark.visible = 0;
     this.forceUpdate();
     this.saveBookmarks();
   }
@@ -297,7 +297,7 @@ class BookmarksList extends React.Component {
       }
       // Populate bookmarks array with new imported items.
       for (let i = 0; i < newBookmarks.length; i++) {
-        newBookmarks[i].visible = true;
+        newBookmarks[i].visible = 1;
         this.bookmarks.push(newBookmarks[i]);
       }
       // Save and display.
@@ -323,7 +323,7 @@ class BookmarksList extends React.Component {
     let bookmarksCount = bookmarks.length;
     let netscapeBookmarks = [];
     for (let i = 0; i < bookmarksCount; i++) {
-      if (bookmarks[i].visible !== false) {
+      if (bookmarks[i].visible !== 0) {
         if (bookmarks[i].type !== 'bookmark') {
           if (bookmarks[i].ns_root === 'toolbar') {
             netscapeBookmarks.push("<DT><H3 PERSONAL_TOOLBAR_FOLDER=\"true\">" + bookmarks[i].title + "</H3>");
@@ -372,11 +372,11 @@ class BookmarksList extends React.Component {
     let bookmarksCount = this.bookmarks.length;
     let bookmarksRepresentation = [];
     for (let i = 0; i < bookmarksCount; i++) {
-      if (this.bookmarks[i].visible) {
+      if (this.bookmarks[i].visible !== 0) {
         bookmarksRepresentation.push(
           <Bookmark
             id={i.toString()}
-            key={"Bookmark" + i}
+            key={'Bookmark' + i + ' ' + this.bookmarks[i].visible}
             type={this.bookmarks[i].type}
             title={this.bookmarks[i].title}
             url={this.bookmarks[i].url}
