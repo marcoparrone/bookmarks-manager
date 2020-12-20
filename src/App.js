@@ -258,7 +258,7 @@ class BookmarksList extends React.Component {
       url: "https://example.example",
       visible: 1
     };
-    this.bookmarks.push(newBookmark);
+    tmpbookmarks.push(newBookmark);
     this.saveBookmarks();
     this.editBookmark(newCursor);
   }
