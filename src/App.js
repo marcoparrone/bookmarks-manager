@@ -144,6 +144,13 @@ class BookmarksList extends React.Component {
   saveBookmarks() {
     let newBookmarks = [];
 
+    // I don't want for the visible value to grow indefinitely.
+    for (let i = 0; i < this.bookmarks.length; i++) {
+      if (this.bookmarks[i].visible > 100) {
+        this.bookmarks[i].visible -= 100;
+      }
+    }
+
     // Save in current state.
     this.setState({
       bookmarks: this.state.bookmarks
@@ -156,14 +163,6 @@ class BookmarksList extends React.Component {
       }
     }
     localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log("--- saveBookmarks:");
-      console.log(this.state.bookmarks);
-      console.log("--- mid");
-      console.log(this.bookmarks);
-      console.log("--- at end of saveBookmarks");
-    }
   }
 
   handleSubmit(cursor) {
