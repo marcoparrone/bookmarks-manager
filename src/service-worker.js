@@ -8,9 +8,9 @@ import {StaleWhileRevalidate} from 'workbox-strategies';
 precacheAndRoute(self.__WB_MANIFEST);
 
 registerRoute(
-  /.*marcoparrone\.com/,
+  /.*marcoparrone\.github\.io/,
   new StaleWhileRevalidate({
-    cacheName: 'marcoparrone',
+    cacheName: 'marcoparronegh',
   })
 );
 
