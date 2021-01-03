@@ -4,13 +4,11 @@
 			"homepage": "https://marcoparrone.github.io/bookmarks-manager",
 			"private": true,
 			"bugs": {
-						"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
-						"email": "marco.parrone@gmail.com"
+				"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
+				"email": "marco.parrone@gmail.com"
 			},
 			"license": "MIT",
 			"dependencies": {
-						"@material-ui/core": "^4.11.2",
-						"@material-ui/icons": "^4.11.2",
 						"@material/card": "^8.0.0",
 						"@material/dialog": "^8.0.0",
 						"@material/react-material-icon": "^0.15.0",
@@ -19,16 +17,12 @@
 						"@material/theme": "^8.0.0",
 						"@material/top-app-bar": "^8.0.0",
 						"@types/classnames": "^2.2.11",
-						"@types/node": "^14.14.13",
+						"@types/node": "^14.14.16",
 						"@types/react": "^17.0.0",
 						"@types/react-dom": "^17.0.0",
-						"async": "^3.2.0",
 						"bookmarks-parser": "^1.5.0",
 						"file-saver": "^2.0.5",
 						"gh-pages": "^3.1.0",
-						"jsdom": "^16.4.0",
-						"lodash": ">=4.17.20",
-						"lodash.template": ">=4.5.0",
 						"patch-package": "^6.2.2",
 						"react": "^17.0.1",
 						"react-dom": "^17.0.1",
@@ -65,9 +59,9 @@
 						"html-webpack-plugin": "^4.5.0",
 						"mocha": "^8.2.1",
 						"should": "^13.2.3",
-						"webpack-cli": "^4.2.0",
+						"webpack-cli": "^4.3.0",
 						"webpack-dev-server": "^3.11.0",
-						"webpack-merge": "^5.7.0",
+						"webpack-merge": "^5.7.3",
 						"workbox-webpack-plugin": "^6.0.2"
 			}
 }
