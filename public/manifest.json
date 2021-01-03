@@ -1,6 +1,7 @@
 {
     "short_name": "Bookmarks",
     "name": "Bookmarks Manager",
+    "description": "A browser-independent bookmarks manager.",
     "icons": [
 	{ "src": "bookmark-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
 	{ "src": "bookmark-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
@@ -13,6 +14,26 @@
     "lang": "en-US",
     "start_url": "https://marcoparrone.github.io/bookmarks-manager/",
     "display": "standalone",
+    "orientation": "any",
     "theme_color": "#000000",
-    "background_color": "#ffffff"
+    "background_color": "#ffffff",
+    "scope": "https://marcoparrone.github.io/bookmarks-manager/",
+    "categories":  ["productivity", "tools"],
+    "screenshots" : [
+        {
+          "src": "screenshot1.png",
+          "sizes": "1080x2220",
+          "type": "image/png"
+        },
+        {
+          "src": "screenshot2.png",
+          "sizes": "1080x2220",
+          "type": "image/png"
+        },
+        {
+          "src": "screenshot3.png",
+          "sizes": "1080x2220",
+          "type": "image/png"
+        }
+      ]
 }
