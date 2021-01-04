@@ -1,11 +1,11 @@
 {
 			"name": "bookmarks-manager",
 			"version": "0.1.0",
-			"homepage": "https://marcoparrone.github.io/bookmarks-manager",
+			"homepage": "https://bookmarks.marcoparrone.com",
 			"private": true,
 			"bugs": {
-				"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
-				"email": "marco.parrone@gmail.com"
+						"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
+						"email": "marco.parrone@gmail.com"
 			},
 			"license": "MIT",
 			"dependencies": {
@@ -22,7 +22,6 @@
 						"@types/react-dom": "^17.0.0",
 						"bookmarks-parser": "^1.5.0",
 						"file-saver": "^2.0.5",
-						"gh-pages": "^3.1.0",
 						"patch-package": "^6.2.2",
 						"react": "^17.0.1",
 						"react-dom": "^17.0.1",
@@ -31,7 +30,7 @@
 			},
 			"scripts": {
 						"predeploy": "npm run build",
-						"deploy": "gh-pages -d build",
+						"deploy": "mydeploy.sh bookmarks-manager",
 						"start": "react-scripts start",
 						"build": "react-scripts build",
 						"test": "react-scripts test",

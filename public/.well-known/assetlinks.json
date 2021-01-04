@@ -1,0 +1,5 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target" : { "namespace": "android_app", "package_name": "com.marcoparrone.twa.bookmarks",
+                   "sha256_cert_fingerprints": ["60:A7:93:32:4E:43:CD:89:E2:D9:28:CB:31:25:5B:DD:3C:FF:29:02:2B:2D:09:15:ED:5B:7D:6C:79:E9:1E:2B"] }
+}]
