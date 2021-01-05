@@ -726,6 +726,7 @@ class BookmarksList extends React.Component {
       '<DL><p>'
     ];
     netscapeBookmarks.push(this.exportBookmarksHelper(this.bookmarks));
+    netscapeBookmarks.push('</DL><p>');
     saveAs(new Blob([netscapeBookmarks.join('\n')], { type: "text/plain;charset=utf-8" }),
       'bookmarks-' + get_timestamp() + '.html');
   }
