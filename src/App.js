@@ -647,7 +647,13 @@ class BookmarksList extends React.Component {
           alert('error loading file: ' + err);
         } else {
           for (let i = 0; i < res.bookmarks.length; i++) {
-            newBookmarks.push(res.bookmarks[i]);
+            if (res.bookmarks[i].ns_root === 'menu') {
+              for (let j = 0; j < res.bookmarks[i].children.length; j++) {
+                newBookmarks.push(res.bookmarks[i].children[j]);
+              }
+            } else {
+              newBookmarks.push(res.bookmarks[i]);
+            }
           }
         }
       });
