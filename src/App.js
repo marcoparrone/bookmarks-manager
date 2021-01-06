@@ -34,6 +34,7 @@ class Bookmark extends React.Component {
       content.push(<label key={keyprefix}>{this.props.title}&nbsp;
                             <a href={this.props.url} target="_blank" rel="noreferrer">
           <button
+            key={keyprefix + "OpenButton"}
             aria-pressed="false"
             aria-label="Open"
             title="Open">
@@ -86,6 +87,7 @@ class Bookmark extends React.Component {
 
     if (this.props.showedit === 'yes') {
       content.push(<button
+        key={keyprefix + "EditButton"}
         aria-pressed="false"
         aria-label="Edit"
         title="Edit"
@@ -96,6 +98,7 @@ class Bookmark extends React.Component {
 
     if (this.props.showmove === 'yes') {
       content.push(<button
+        key={keyprefix + "BackwardButton"}
         aria-pressed="false"
         aria-label="Move Backward"
         title="Move Backward"
@@ -103,6 +106,7 @@ class Bookmark extends React.Component {
           <i className="material-icons mdc-icon-button__icon">keyboard_arrow_left</i>
       </button>);
       content.push(<button
+        key={keyprefix + "ForwardButton"}
         aria-pressed="false"
         aria-label="Move Forward"
         title="Move Forward"
@@ -110,6 +114,7 @@ class Bookmark extends React.Component {
           <i className="material-icons mdc-icon-button__icon">keyboard_arrow_right</i>
       </button>);
       content.push(<button
+        key={keyprefix + "UpwardButton"}
         aria-pressed="false"
         aria-label="Move Upward"
         title="Move Upward"
@@ -117,6 +122,7 @@ class Bookmark extends React.Component {
           <i className="material-icons mdc-icon-button__icon">keyboard_arrow_up</i>
       </button>);
             content.push(<button
+              key={keyprefix + "DownwardButton"}
               aria-pressed="false"
               aria-label="Move Downward"
               title="Move Downward"
