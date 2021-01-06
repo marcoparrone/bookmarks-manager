@@ -236,7 +236,7 @@ class BookmarksList extends React.Component {
 
     // Save in current state.
     this.setState({
-      bookmarks: this.state.bookmarks,
+      bookmarks: this.bookmarks,
       cursor: this.cursor,
       tmptype: this.tmptype,
       tmptitle: this.tmptitle,
