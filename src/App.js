@@ -189,14 +189,14 @@ class BookmarksList extends React.Component {
     let showedit = localStorage.getItem('bookmarks_showedit');
     let showmove = localStorage.getItem('bookmarks_showmove');
     let showadd = localStorage.getItem('bookmarks_showadd');
-    if (showedit === 'yes') {
-      this.showedit = 'yes';
+    if (showedit === 'yes' || showedit === 'no') {
+      this.showedit = showedit;
     }
-    if (showmove === 'yes') {
-      this.showmove = 'yes';
+    if (showmove === 'yes' || showmove === 'no') {
+      this.showmove = showmove;
     }
-    if (showadd === 'yes') {
-      this.showadd = 'yes';
+    if (showadd === 'yes' || showadd === 'no') {
+      this.showadd = showadd;
     }
     this.loadBookmarks();
   }
