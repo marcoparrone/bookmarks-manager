@@ -172,7 +172,6 @@ class BookmarksList extends React.Component {
     this.moveupwardBookmark = this.moveupwardBookmark.bind(this);
     this.movedownwardBookmark = this.movedownwardBookmark.bind(this);
     this.about = this.about.bind(this);
-    this.alert = this.alert.bind(this);
     this.help = this.help.bind(this);
     this.Settings = this.Settings.bind(this);
     this.importExportBookmarks = this.importExportBookmarks.bind(this);
@@ -212,11 +211,6 @@ class BookmarksList extends React.Component {
 
   importExportBookmarks() {
     const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#impexp'));
-    dialog.open();
-  }
-
-  alert() {
-    const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#alert'));
     dialog.open();
   }
 
@@ -802,15 +796,6 @@ class BookmarksList extends React.Component {
               </TopAppBarIcon>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="alert"
-                  hasRipple
-                  icon='error'
-                  onClick={() => this.alert()}
-                  style={{ color: 'orange'}}
-                />
-              </TopAppBarIcon>
-              <TopAppBarIcon actionItem tabIndex={0}>
-                <MaterialIcon
                   aria-label="help"
                   hasRipple
                   icon='help'
@@ -964,24 +949,6 @@ class BookmarksList extends React.Component {
                 </footer>
               </div>
             </div>
-          </div>
-
-          <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="alert">
-            <div className="mdc-dialog__container">
-              <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="alert-dialog-title">IMPORTANT NEWS</h2>
-                <div className="mdc-dialog__content" id="alert-dialog-content">
-                <p>Bookmarks Manager was migrated to its own subdomain for increased security.</p>
-                <p>Bookmarks Manager uses your browser localStorage to save the bookmarks. If you were already using Bookmarks Manager before the migration, you can find your old bookmarks at the old domain: <a href="https://marcoparrone.com/bookmarks-manager" target="_blank" rel="noreferrer">https://marcoparrone.com/bookmarks-manager</a>: please export them from there and re-import them in the new app.</p>
-                </div>
-                <footer className="mdc-dialog__actions">
-                  <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-                    <span className="mdc-button__label">Close</span>
-                  </button>
-                </footer>
-              </div>
-            </div>
-            <div className="mdc-dialog__scrim"></div>
           </div>
 
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="help">
