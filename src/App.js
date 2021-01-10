@@ -956,7 +956,7 @@ class BookmarksList extends React.Component {
               <div className="mdc-dialog__surface">
                 <h2 className="mdc-dialog__title" id="help-dialog-title">Help</h2>
                 <div className="mdc-dialog__content" id="help-dialog-content">
-                  <p>Bookmarks Manager is an application which helps to save and edit internet bookmarks.</p>
+                  <p>Bookmarks Manager is an application that helps to save and edit internet bookmarks.</p>
                   <p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
                   <p>Press the "open" button near a bookmark to open the related URL.</p>
                   <p>Press the "add" button inside a folder to add a new element to it.</p>
@@ -973,7 +973,7 @@ class BookmarksList extends React.Component {
                     The bookmarks are saved in the browser’s localStorage for the bookmarks.marcoparrone.com domain.
                     localStorage works fine with Chrome, Edge and Firefox browsers. Other browsers may delete localStorage after some time.
                     Android by default uses Chrome, Windows by default uses Edge. Bookmarks Manager currently is not supported on Apple products.
-                    With the purpose to help preventing the loss of the bookmarks, it is suggested to make a backup using the "export" functionality, every time you make some modifications which you don't want to lose.</p>
+                    With the purpose to help to prevent the loss of the bookmarks, it is suggested to make a backup using the "export" functionality, every time you make some modifications that you don't want to lose.</p>
                 </div>
                 <footer className="mdc-dialog__actions">
                   <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
