@@ -1456,7 +1456,7 @@ class BookmarksList extends React.Component {
                       value="no"
                       checked={this.state.showedit === 'no'}
                       onChange={this.handleSettingsChange}>
-                    </input>no
+                    </input>{this.state.text_no}
                   </label><br />
 
                   <label>{this.state.text_settings_showmove}
