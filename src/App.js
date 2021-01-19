@@ -1389,7 +1389,7 @@ class BookmarksList extends React.Component {
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="editbookmark">
             <div className="mdc-dialog__container">
               <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="editbookmark-dialog-title">Edit bookmark</h2>
+                <h2 className="mdc-dialog__title" id="editbookmark-dialog-title">{this.state.text_edit_title}</h2>
                 <div className="mdc-dialog__content" id="editbookmark-dialog-content">
 
                   <label>{this.state.text_edit_type}
