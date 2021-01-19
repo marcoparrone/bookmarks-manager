@@ -22,7 +22,88 @@ import parse from 'bookmarks-parser';
 
 import saveAs from 'file-saver';
 
+import Banana from 'banana-i18n';
+import HtmlParse from 'html-react-parser';
+
 import get_timestamp from './timestamp';
+
+const text_appname = 'Bookmarks';
+const text_add_label = 'add a bookmark';
+const text_settings_label = 'settings';
+const text_importexport_label = 'import and export bookmarks';
+const text_help_label = 'help';
+const text_about_label = 'about';
+const text_edit_title = 'Edit bookmark';
+const text_edit_type = 'Type:';
+const text_edit_bookmark = 'bookmark';
+const text_edit_folder = 'folder';
+const text_edit_bookmark_title = 'Title:';
+const text_edit_url = 'URL:';
+const text_delete = 'Delete';
+const text_back = 'Back';
+const text_save = 'Save';
+const text_settings_title = 'Settings';
+const text_settings_content1 = 'Here you can configure the application.';
+const text_yes = 'yes';
+const text_no = 'no';
+const text_settings_showedit = 'Show edit buttons:';
+const text_settings_showmove = 'Show movement buttons:';
+const text_settings_showadd = 'Show "add" buttons in folders:';
+const text_language = 'Choose language:';
+const text_close_button = 'Close';
+const text_importexport_title = 'Import/export';
+const text_importexport_content = 'Here you can import and export your bookmarks in Netscape format.';
+const text_import = 'Import:';
+const text_export = 'Export';
+const text_error_loadfile = 'error: cannot load file.';
+const text_error_loadingfile = 'error loading file: ';
+const text_example_title = 'Example Title';
+const text_example_url = 'https://example.example';
+const text_open = 'Open';
+const text_add = 'Add';
+const text_edit = 'Edit';
+const text_move_backward = 'Move Backward';
+const text_move_forward = 'Move Forward';
+const text_move_upward = 'Move Upward';
+const text_move_downward = 'Move Downward';
+const text_help_title = 'Help';
+const text_about_title = 'About';
+const text_help_content = `<p>Bookmarks Manager is an application that helps to save and edit internet bookmarks.</p>
+<p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
+<p>Press the "open" button near a bookmark to open the related URL.</p>
+<p>Press the "add" button inside a folder to add a new element to it.</p>
+<p>For both bookmarks and folders, press the "edit" button to modify them,
+press the "move backward" button to exchange the position with the previous element,
+press the "move forward" button to exchange the position with the next element,
+press the "move upward" button to move the element out of the folder where it currently is,
+or press the "move downward" button to move the element inside the next subfolder. 
+</p>
+<p>In the settings menu, accessible after clicking on the "settings" icon, you can hide or show the editing, movement and addition buttons.  It is also possible to change the language of the user interface.</p>
+<p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers. When importing the bookmarks from a file, the current bookmarks will be deleted and overwritten.</p>
+<p>Bookmarks Manager is a Progressive Web Application, which means that it runs inside a browser.
+When you install it, while the browser components are not shown, it still runs inside a browser.
+The bookmarks are saved in the browser’s localStorage for the bookmarks.marcoparrone.com domain.
+localStorage works fine with Chrome, Edge and Firefox browsers. Other browsers may delete localStorage after some time.
+Android by default uses Chrome, Windows by default uses Edge. Bookmarks Manager currently is not supported on Apple products.
+With the purpose to help to prevent the loss of the bookmarks, it is suggested to make a backup using the "export" functionality, every time you make some modifications that you don't want to lose.</p>`;
+const text_about_content1 = `<p>Copyright © 2017,2019,2020,2021 Marco Parrone.
+<br />All Rights Reserved.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>`;
+const text_about_content2 = `
+<p>THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>
+`;
+const text_about_content3 = `
+<p>This web app has been translated for your convenience using translation software powered by Google Translate. Reasonable efforts have been made to provide an accurate translation, however, no automated translation is perfect nor is it intended to replace human translators. Translations are provided as a service to users of the marcoparrone.com website, and are provided "as is." No warranty of any kind, either expressed or implied, is made as to the accuracy, reliability, or correctness of any translations made from English into any other language. Some content (such as images, videos, Flash, etc.) may not be accurately translated due to the limitations of the translation software.</p>
+<p>The official text is the English version of the website. Any discrepancies or differences created in the translation are not binding and have no legal effect for compliance or enforcement purposes. If any questions arise related to the accuracy of the information contained in the translated website, refer to the English version of the website which is the official version.</p>
+`;
+
+const supported_languages = ['en', 'af', 'sq', 'am', 'ar', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'bg', 'ca', 'ceb', 'ny', 'zh-CN', 'zh-TW', 'co', 'hr', 'cs', 'da', 'nl', 'eo', 'et', 'tl', 'fi', 'fr', 'fy', 'gl', 'ka', 'de', 'el', 'gu', 'ht', 'ha', 'haw', 'iw', 'hi', 'hmn', 'hu', 'is', 'ig', 'id', 'ga', 'it', 'ja', 'jw', 'kn', 'kk', 'km', 'rw', 'ko', 'ku', 'ky', 'lo', 'la', 'lv', 'lt', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'mi', 'mr', 'mn', 'my', 'ne', 'no', 'or', 'ps', 'fa', 'pl', 'pt', 'pa', 'ro', 'ru', 'sm', 'gd', 'sr', 'st', 'sn', 'sd', 'si', 'sk', 'sl', 'so', 'es', 'su', 'sw', 'sv', 'tg', 'ta', 'tt', 'te', 'th', 'tr', 'tk', 'uk', 'ur', 'ug', 'uz', 'vi', 'cy', 'xh', 'yi', 'yo', 'zu', 'he', 'zh'];
 
 class Bookmark extends React.Component {
   render() {
@@ -36,8 +117,8 @@ class Bookmark extends React.Component {
           <button
             key={keyprefix + "OpenButton"}
             aria-pressed="false"
-            aria-label="Open"
-            title="Open">
+            aria-label={this.props.text_open}
+            title={this.props.text_open}>
             <i className="material-icons mdc-icon-button__icon">open_in_new</i>
           </button>
         </a>
@@ -68,6 +149,13 @@ class Bookmark extends React.Component {
               moveforwardBookmark={this.props.moveforwardBookmark}
               moveupwardBookmark={this.props.moveupwardBookmark}
               movedownwardBookmark={this.props.movedownwardBookmark}
+              text_open={this.props.text_open}
+              text_add={this.props.text_add}
+              text_edit={this.props.text_edit}
+              text_move_backward={this.props.text_move_backward}
+              text_move_forward={this.props.text_move_forward}
+              text_move_upward={this.props.text_move_upward}
+              text_move_downward={this.props.text_move_downward}
             />);
           }
         }
@@ -77,8 +165,8 @@ class Bookmark extends React.Component {
         content.push(<button
           key={keyprefix + "AddButton"}
           aria-pressed="false"
-          aria-label="Add"
-          title="Add"
+          aria-label={this.props.text_add}
+          title={this.props.text_add}
           onClick={event => this.props.addBookmark(this.props.id)}>
           <i className="material-icons mdc-icon-button__icon">add</i>
         </button>);
@@ -89,8 +177,8 @@ class Bookmark extends React.Component {
       content.push(<button
         key={keyprefix + "EditButton"}
         aria-pressed="false"
-        aria-label="Edit"
-        title="Edit"
+        aria-label={this.props.text_edit}
+        title={this.props.text_edit}
         onClick={event => this.props.editBookmark(this.props.id)}>
         <i className="material-icons mdc-icon-button__icon">edit</i>
       </button>);
@@ -100,35 +188,35 @@ class Bookmark extends React.Component {
       content.push(<button
         key={keyprefix + "BackwardButton"}
         aria-pressed="false"
-        aria-label="Move Backward"
-        title="Move Backward"
+        aria-label={this.props.text_move_backward}
+        title={this.props.text_move_backward}
         onClick={event => this.props.movebackwardBookmark(this.props.id)}>
-          <i className="material-icons mdc-icon-button__icon">keyboard_arrow_left</i>
+        <i className="material-icons mdc-icon-button__icon">keyboard_arrow_left</i>
       </button>);
       content.push(<button
         key={keyprefix + "ForwardButton"}
         aria-pressed="false"
-        aria-label="Move Forward"
-        title="Move Forward"
+        aria-label={this.props.text_move_forward}
+        title={this.props.text_move_forward}
         onClick={event => this.props.moveforwardBookmark(this.props.id)}>
-          <i className="material-icons mdc-icon-button__icon">keyboard_arrow_right</i>
+        <i className="material-icons mdc-icon-button__icon">keyboard_arrow_right</i>
       </button>);
       content.push(<button
         key={keyprefix + "UpwardButton"}
         aria-pressed="false"
-        aria-label="Move Upward"
-        title="Move Upward"
+        aria-label={this.props.text_move_upward}
+        title={this.props.text_move_upward}
         onClick={event => this.props.moveupwardBookmark(this.props.id)}>
-          <i className="material-icons mdc-icon-button__icon">keyboard_arrow_up</i>
+        <i className="material-icons mdc-icon-button__icon">keyboard_arrow_up</i>
       </button>);
-            content.push(<button
-              key={keyprefix + "DownwardButton"}
-              aria-pressed="false"
-              aria-label="Move Downward"
-              title="Move Downward"
-              onClick={event => this.props.movedownwardBookmark(this.props.id)}>
-                <i className="material-icons mdc-icon-button__icon">keyboard_arrow_down</i>
-            </button>);
+      content.push(<button
+        key={keyprefix + "DownwardButton"}
+        aria-pressed="false"
+        aria-label={this.props.text_move_downward}
+        title={this.props.text_move_downward}
+        onClick={event => this.props.movedownwardBookmark(this.props.id)}>
+        <i className="material-icons mdc-icon-button__icon">keyboard_arrow_down</i>
+      </button>);
     }
 
     return (
@@ -153,6 +241,54 @@ class BookmarksList extends React.Component {
     this.showedit = 'no';
     this.showmove = 'no';
     this.showadd = 'yes';
+
+    this.language = '';
+    this.text_appname = text_appname;
+    this.text_add_label = text_add_label;
+    this.text_settings_label = text_settings_label;
+    this.text_importexport_label = text_importexport_label;
+    this.text_help_label = text_help_label;
+    this.text_about_label = text_about_label;
+    this.text_edit_title = text_edit_title;
+    this.text_edit_type = text_edit_type;
+    this.text_edit_bookmark = text_edit_bookmark;
+    this.text_edit_folder = text_edit_folder;
+    this.text_edit_bookmark_title = text_edit_bookmark_title;
+    this.text_edit_url = text_edit_url;
+    this.text_delete = text_delete;
+    this.text_back = text_back;
+    this.text_save = text_save;
+    this.text_settings_title = text_settings_title;
+    this.text_settings_content1 = text_settings_content1;
+    this.text_yes = text_yes;
+    this.text_no = text_no;
+    this.text_settings_showedit = text_settings_showedit;
+    this.text_settings_showmove = text_settings_showmove;
+    this.text_settings_showadd = text_settings_showadd;
+    this.text_language = text_language;
+    this.text_close_button = text_close_button;
+    this.text_importexport_title = text_importexport_title;
+    this.text_importexport_content = text_importexport_content;
+    this.text_import = text_import;
+    this.text_export = text_export;
+    this.text_error_loadfile = text_error_loadfile;
+    this.text_error_loadingfile = text_error_loadingfile;
+    this.text_example_title = text_example_title;
+    this.text_example_url = text_example_url;
+    this.text_open = text_open;
+    this.text_add = text_add;
+    this.text_edit = text_edit;
+    this.text_move_backward = text_move_backward;
+    this.text_move_forward = text_move_forward;
+    this.text_move_upward = text_move_upward;
+    this.text_move_downward = text_move_downward;
+    this.text_help_title = text_help_title;
+    this.text_about_title = text_about_title;
+    this.text_help_content = text_help_content;
+    this.text_about_content1 = text_about_content1;
+    this.text_about_content2 = text_about_content2;
+    this.text_about_content3 = text_about_content3;
+
     this.state = {
       bookmarks: this.bookmarks,
       cursor: this.cursor,
@@ -160,8 +296,54 @@ class BookmarksList extends React.Component {
       tmptitle: this.tmptitle,
       tmpurl: this.tmpurl,
       showedit: this.showedit,
-      showmove: this.showmove,  
-      showadd: this.showadd
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text_appname,
+      text_add_label: this.text_add_label,
+      text_settings_label: this.text_settings_label,
+      text_importexport_label: this.text_importexport_label,
+      text_help_label: this.text_help_label,
+      text_about_label: this.text_about_label,
+      text_edit_title: this.text_edit_title,
+      text_edit_type: this.text_edit_type,
+      text_edit_bookmark: this.text_edit_bookmark,
+      text_edit_folder: this.text_edit_folder,
+      text_edit_bookmark_title: this.text_edit_bookmark_title,
+      text_edit_url: this.text_edit_url,
+      text_delete: this.text_delete,
+      text_back: this.text_back,
+      text_save: this.text_save,
+      text_settings_title: this.text_settings_title,
+      text_settings_content1: this.text_settings_content1,
+      text_yes: this.text_yes,
+      text_no: this.text_no,
+      text_settings_showedit: this.text_settings_showedit,
+      text_settings_showmove: this.text_settings_showmove,
+      text_settings_showadd: this.text_settings_showadd,
+      text_language: this.text_language,
+      text_close_button: this.text_close_button,
+      text_importexport_title: this.text_importexport_title,
+      text_importexport_content: this.text_importexport_content,
+      text_import: this.text_import,
+      text_export: this.text_export,
+      text_error_loadfile: this.text_error_loadfile,
+      text_error_loadingfile: this.text_error_loadingfile,
+      text_example_title: this.text_example_title,
+      text_example_url: this.text_example_url,
+      text_open: this.text_open,
+      text_add: this.text_add,
+      text_edit: this.text_edit,
+      text_move_backward: this.text_move_backward,
+      text_move_forward: this.text_move_forward,
+      text_move_upward: this.text_move_upward,
+      text_move_downward: this.text_move_downward,
+      text_help_title: this.text_help_title,
+      text_about_title: this.text_about_title,
+      text_help_content: this.text_help_content,
+      text_about_content1: this.text_about_content1,
+      text_about_content2: this.text_about_content2,
+      text_about_content3: this.text_about_content3
     };
     this.deleteBookmark = this.deleteBookmark.bind(this);
     this.addBookmark = this.addBookmark.bind(this);
@@ -184,10 +366,142 @@ class BookmarksList extends React.Component {
     this.bookmarksListRef = React.createRef();
   }
 
+  i18n_init() {
+    let banana = new Banana();
+
+    if (this.language === '' && navigator && navigator.languages) {
+      this.language = navigator.languages.find(lang => { return supported_languages.includes(lang) });
+      if (!this.language) {
+        this.language = 'en';
+      }
+    }
+
+    banana.setLocale(this.language);
+    fetch('i18n/' + banana.locale + '.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        } else {
+          return response.json();
+        }
+      })
+      .then((messages) => {
+        banana.load(messages, banana.locale);
+        this.text_appname = banana.i18n('text_appname');
+        this.text_add_label = banana.i18n('text_add_label');
+        this.text_settings_label = banana.i18n('text_settings_label');
+        this.text_importexport_label = banana.i18n('text_importexport_label');
+        this.text_help_label = banana.i18n('text_help_label');
+        this.text_about_label = banana.i18n('text_about_label');
+        this.text_edit_title = banana.i18n('text_edit_title');
+        this.text_edit_type = banana.i18n('text_edit_type');
+        this.text_edit_bookmark = banana.i18n('text_edit_bookmark');
+        this.text_edit_folder = banana.i18n('text_edit_folder');
+        this.text_edit_bookmark_title = banana.i18n('text_edit_bookmark_title');
+        this.text_edit_url = banana.i18n('text_edit_url');
+        this.text_delete = banana.i18n('text_delete');
+        this.text_back = banana.i18n('text_back');
+        this.text_save = banana.i18n('text_save');
+        this.text_settings_title = banana.i18n('text_settings_title');
+        this.text_settings_content1 = banana.i18n('text_settings_content1');
+        this.text_yes = banana.i18n('text_yes');
+        this.text_no = banana.i18n('text_no');
+        this.text_settings_showedit = banana.i18n('text_settings_showedit');
+        this.text_settings_showmove = banana.i18n('text_settings_showmove');
+        this.text_settings_showadd = banana.i18n('text_settings_showadd');
+        this.text_language = banana.i18n('text_language');
+        this.text_close_button = banana.i18n('text_close_button');
+        this.text_importexport_title = banana.i18n('text_importexport_title');
+        this.text_importexport_content = banana.i18n('text_importexport_content');
+        this.text_import = banana.i18n('text_import');
+        this.text_export = banana.i18n('text_export');
+        this.text_error_loadfile = banana.i18n('text_error_loadfile');
+        this.text_error_loadingfile = banana.i18n('text_error_loadingfile');
+        this.text_example_title = banana.i18n('text_example_title');
+        this.text_example_url = banana.i18n('text_example_url');
+        this.text_open = banana.i18n('text_open');
+        this.text_add = banana.i18n('text_add');
+        this.text_edit = banana.i18n('text_edit');
+        this.text_move_backward = banana.i18n('text_move_backward');
+        this.text_move_forward = banana.i18n('text_move_forward');
+        this.text_move_upward = banana.i18n('text_move_upward');
+        this.text_move_downward = banana.i18n('text_move_downward');
+        this.text_help_title = banana.i18n('text_help_title');
+        this.text_about_title = banana.i18n('text_about_title');
+        this.text_help_content = banana.i18n('text_help_content');
+        this.text_about_content1 = banana.i18n('text_about_content1');
+        this.text_about_content2 = banana.i18n('text_about_content2');
+        this.text_about_content3 = banana.i18n('text_about_content3');
+        this.setState({
+          bookmarks: this.bookmarks,
+          cursor: this.cursor,
+          tmptype: this.tmptype,
+          tmptitle: this.tmptitle,
+          tmpurl: this.tmpurl,
+          showedit: this.showedit,
+          showmove: this.showmove,
+          showadd: this.showadd,
+          language: this.language,
+          text_appname: this.text_appname,
+          text_add_label: this.text_add_label,
+          text_settings_label: this.text_settings_label,
+          text_importexport_label: this.text_importexport_label,
+          text_help_label: this.text_help_label,
+          text_about_label: this.text_about_label,
+          text_edit_title: this.text_edit_title,
+          text_edit_type: this.text_edit_type,
+          text_edit_bookmark: this.text_edit_bookmark,
+          text_edit_folder: this.text_edit_folder,
+          text_edit_bookmark_title: this.text_edit_bookmark_title,
+          text_edit_url: this.text_edit_url,
+          text_delete: this.text_delete,
+          text_back: this.text_back,
+          text_save: this.text_save,
+          text_settings_title: this.text_settings_title,
+          text_settings_content1: this.text_settings_content1,
+          text_yes: this.text_yes,
+          text_no: this.text_no,
+          text_settings_showedit: this.text_settings_showedit,
+          text_settings_showmove: this.text_settings_showmove,
+          text_settings_showadd: this.text_settings_showadd,
+          text_language: this.text_language,
+          text_close_button: this.text_close_button,
+          text_importexport_title: this.text_importexport_title,
+          text_importexport_content: this.text_importexport_content,
+          text_import: this.text_import,
+          text_export: this.text_export,
+          text_error_loadfile: this.text_error_loadfile,
+          text_error_loadingfile: this.text_error_loadingfile,
+          text_example_title: this.text_example_title,
+          text_example_url: this.text_example_url,
+          text_open: this.text_open,
+          text_add: this.text_add,
+          text_edit: this.text_edit,
+          text_move_backward: this.text_move_backward,
+          text_move_forward: this.text_move_forward,
+          text_move_upward: this.text_move_upward,
+          text_move_downward: this.text_move_downward,
+          text_help_title: this.text_help_title,
+          text_about_title: this.text_about_title,
+          text_help_content: this.text_help_content,
+          text_about_content1: this.text_about_content1,
+          text_about_content2: this.text_about_content2,
+          text_about_content3: this.text_about_content3
+        });
+
+        localStorage.setItem('language', this.language);
+      })
+      .catch(error => {
+        console.error('Cannot fetch i18n/' + banana.locale + '.json: ', error);
+      });
+  }
+
   componentDidMount() {
     let showedit = localStorage.getItem('bookmarks_showedit');
     let showmove = localStorage.getItem('bookmarks_showmove');
     let showadd = localStorage.getItem('bookmarks_showadd');
+    let language = localStorage.getItem('language');
+    
     if (showedit === 'yes' || showedit === 'no') {
       this.showedit = showedit;
     }
@@ -197,6 +511,15 @@ class BookmarksList extends React.Component {
     if (showadd === 'yes' || showadd === 'no') {
       this.showadd = showadd;
     }
+
+    if (supported_languages.includes(language)) {
+      this.language = language;
+    }
+    
+    // Localize the User Interface.
+    this.i18n_init();
+
+    // Load the bookmarks from localStorage.
     this.loadBookmarks();
   }
 
@@ -242,8 +565,54 @@ class BookmarksList extends React.Component {
       tmptitle: this.tmptitle,
       tmpurl: this.tmpurl,
       showedit: this.showedit,
-      showmove: this.showmove,  
-      showadd: this.showadd
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text_appname,
+      text_add_label: this.text_add_label,
+      text_settings_label: this.text_settings_label,
+      text_importexport_label: this.text_importexport_label,
+      text_help_label: this.text_help_label,
+      text_about_label: this.text_about_label,
+      text_edit_title: this.text_edit_title,
+      text_edit_type: this.text_edit_type,
+      text_edit_bookmark: this.text_edit_bookmark,
+      text_edit_folder: this.text_edit_folder,
+      text_edit_bookmark_title: this.text_edit_bookmark_title,
+      text_edit_url: this.text_edit_url,
+      text_delete: this.text_delete,
+      text_back: this.text_back,
+      text_save: this.text_save,
+      text_settings_title: this.text_settings_title,
+      text_settings_content1: this.text_settings_content1,
+      text_yes: this.text_yes,
+      text_no: this.text_no,
+      text_settings_showedit: this.text_settings_showedit,
+      text_settings_showmove: this.text_settings_showmove,
+      text_settings_showadd: this.text_settings_showadd,
+      text_language: this.text_language,
+      text_close_button: this.text_close_button,
+      text_importexport_title: this.text_importexport_title,
+      text_importexport_content: this.text_importexport_content,
+      text_import: this.text_import,
+      text_export: this.text_export,
+      text_error_loadfile: this.text_error_loadfile,
+      text_error_loadingfile: this.text_error_loadingfile,
+      text_example_title: this.text_example_title,
+      text_example_url: this.text_example_url,
+      text_open: this.text_open,
+      text_add: this.text_add,
+      text_edit: this.text_edit,
+      text_move_backward: this.text_move_backward,
+      text_move_forward: this.text_move_forward,
+      text_move_upward: this.text_move_upward,
+      text_move_downward: this.text_move_downward,
+      text_help_title: this.text_help_title,
+      text_about_title: this.text_about_title,
+      text_help_content: this.text_help_content,
+      text_about_content1: this.text_about_content1,
+      text_about_content2: this.text_about_content2,
+      text_about_content3: this.text_about_content3
     });
 
     // Save in local storage, skipping deleted bookmarks.
@@ -256,7 +625,7 @@ class BookmarksList extends React.Component {
   }
 
   handleSubmit(cursor) {
-    let newCursor = cursor.split(".");
+    let newCursor = cursor.toString().split(".");
     let bookmark = null;
     if (newCursor.length > 0) {
       bookmark = this.bookmarks[newCursor[0]];
@@ -293,8 +662,54 @@ class BookmarksList extends React.Component {
       tmptitle: this.tmptitle,
       tmpurl: this.tmpurl,
       showedit: this.showedit,
-      showmove: this.showmove,  
-      showadd: this.showadd
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text_appname,
+      text_add_label: this.text_add_label,
+      text_settings_label: this.text_settings_label,
+      text_importexport_label: this.text_importexport_label,
+      text_help_label: this.text_help_label,
+      text_about_label: this.text_about_label,
+      text_edit_title: this.text_edit_title,
+      text_edit_type: this.text_edit_type,
+      text_edit_bookmark: this.text_edit_bookmark,
+      text_edit_folder: this.text_edit_folder,
+      text_edit_bookmark_title: this.text_edit_bookmark_title,
+      text_edit_url: this.text_edit_url,
+      text_delete: this.text_delete,
+      text_back: this.text_back,
+      text_save: this.text_save,
+      text_settings_title: this.text_settings_title,
+      text_settings_content1: this.text_settings_content1,
+      text_yes: this.text_yes,
+      text_no: this.text_no,
+      text_settings_showedit: this.text_settings_showedit,
+      text_settings_showmove: this.text_settings_showmove,
+      text_settings_showadd: this.text_settings_showadd,
+      text_language: this.text_language,
+      text_close_button: this.text_close_button,
+      text_importexport_title: this.text_importexport_title,
+      text_importexport_content: this.text_importexport_content,
+      text_import: this.text_import,
+      text_export: this.text_export,
+      text_error_loadfile: this.text_error_loadfile,
+      text_error_loadingfile: this.text_error_loadingfile,
+      text_example_title: this.text_example_title,
+      text_example_url: this.text_example_url,
+      text_open: this.text_open,
+      text_add: this.text_add,
+      text_edit: this.text_edit,
+      text_move_backward: this.text_move_backward,
+      text_move_forward: this.text_move_forward,
+      text_move_upward: this.text_move_upward,
+      text_move_downward: this.text_move_downward,
+      text_help_title: this.text_help_title,
+      text_about_title: this.text_about_title,
+      text_help_content: this.text_help_content,
+      text_about_content1: this.text_about_content1,
+      text_about_content2: this.text_about_content2,
+      text_about_content3: this.text_about_content3
     });
   }
 
@@ -306,18 +721,24 @@ class BookmarksList extends React.Component {
           localStorage.setItem('bookmarks_showedit', this.showedit);
         }
         break;
-        case 'showmove':
-          if (e.target.checked === true) {
-            this.showmove = e.target.value;
-            localStorage.setItem('bookmarks_showmove', this.showmove);
-          }
-          break;
-        case 'showadd':
-          if (e.target.checked === true) {
-            this.showadd = e.target.value;
-            localStorage.setItem('bookmarks_showadd', this.showadd);
-          }
-          break;
+      case 'showmove':
+        if (e.target.checked === true) {
+          this.showmove = e.target.value;
+          localStorage.setItem('bookmarks_showmove', this.showmove);
+        }
+        break;
+      case 'showadd':
+        if (e.target.checked === true) {
+          this.showadd = e.target.value;
+          localStorage.setItem('bookmarks_showadd', this.showadd);
+        }
+        break;
+      case 'lang':
+        if (supported_languages.includes(e.target.value)) {
+          this.language = e.target.value;
+          this.i18n_init();
+        }
+        break;
       default:
         break;
     }
@@ -328,11 +749,57 @@ class BookmarksList extends React.Component {
       tmptitle: this.tmptitle,
       tmpurl: this.tmpurl,
       showedit: this.showedit,
-      showmove: this.showmove,  
-      showadd: this.showadd
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text_appname,
+      text_add_label: this.text_add_label,
+      text_settings_label: this.text_settings_label,
+      text_importexport_label: this.text_importexport_label,
+      text_help_label: this.text_help_label,
+      text_about_label: this.text_about_label,
+      text_edit_title: this.text_edit_title,
+      text_edit_type: this.text_edit_type,
+      text_edit_bookmark: this.text_edit_bookmark,
+      text_edit_folder: this.text_edit_folder,
+      text_edit_bookmark_title: this.text_edit_bookmark_title,
+      text_edit_url: this.text_edit_url,
+      text_delete: this.text_delete,
+      text_back: this.text_back,
+      text_save: this.text_save,
+      text_settings_title: this.text_settings_title,
+      text_settings_content1: this.text_settings_content1,
+      text_yes: this.text_yes,
+      text_no: this.text_no,
+      text_settings_showedit: this.text_settings_showedit,
+      text_settings_showmove: this.text_settings_showmove,
+      text_settings_showadd: this.text_settings_showadd,
+      text_language: this.text_language,
+      text_close_button: this.text_close_button,
+      text_importexport_title: this.text_importexport_title,
+      text_importexport_content: this.text_importexport_content,
+      text_import: this.text_import,
+      text_export: this.text_export,
+      text_error_loadfile: this.text_error_loadfile,
+      text_error_loadingfile: this.text_error_loadingfile,
+      text_example_title: this.text_example_title,
+      text_example_url: this.text_example_url,
+      text_open: this.text_open,
+      text_add: this.text_add,
+      text_edit: this.text_edit,
+      text_move_backward: this.text_move_backward,
+      text_move_forward: this.text_move_forward,
+      text_move_upward: this.text_move_upward,
+      text_move_downward: this.text_move_downward,
+      text_help_title: this.text_help_title,
+      text_about_title: this.text_about_title,
+      text_help_content: this.text_help_content,
+      text_about_content1: this.text_about_content1,
+      text_about_content2: this.text_about_content2,
+      text_about_content3: this.text_about_content3
     });
   }
-  
+
   loadBookmarks() {
     let bookmarks = localStorage.getItem('bookmarks');
     if (bookmarks) {
@@ -344,8 +811,54 @@ class BookmarksList extends React.Component {
         tmptitle: this.tmptitle,
         tmpurl: this.tmpurl,
         showedit: this.showedit,
-        showmove: this.showmove,  
-        showadd: this.showadd
+        showmove: this.showmove,
+        showadd: this.showadd,
+        language: this.language,
+        text_appname: this.text_appname,
+        text_add_label: this.text_add_label,
+        text_settings_label: this.text_settings_label,
+        text_importexport_label: this.text_importexport_label,
+        text_help_label: this.text_help_label,
+        text_about_label: this.text_about_label,
+        text_edit_title: this.text_edit_title,
+        text_edit_type: this.text_edit_type,
+        text_edit_bookmark: this.text_edit_bookmark,
+        text_edit_folder: this.text_edit_folder,
+        text_edit_bookmark_title: this.text_edit_bookmark_title,
+        text_edit_url: this.text_edit_url,
+        text_delete: this.text_delete,
+        text_back: this.text_back,
+        text_save: this.text_save,
+        text_settings_title: this.text_settings_title,
+        text_settings_content1: this.text_settings_content1,
+        text_yes: this.text_yes,
+        text_no: this.text_no,
+        text_settings_showedit: this.text_settings_showedit,
+        text_settings_showmove: this.text_settings_showmove,
+        text_settings_showadd: this.text_settings_showadd,
+        text_language: this.text_language,
+        text_close_button: this.text_close_button,
+        text_importexport_title: this.text_importexport_title,
+        text_importexport_content: this.text_importexport_content,
+        text_import: this.text_import,
+        text_export: this.text_export,
+        text_error_loadfile: this.text_error_loadfile,
+        text_error_loadingfile: this.text_error_loadingfile,
+        text_example_title: this.text_example_title,
+        text_example_url: this.text_example_url,
+        text_open: this.text_open,
+        text_add: this.text_add,
+        text_edit: this.text_edit,
+        text_move_backward: this.text_move_backward,
+        text_move_forward: this.text_move_forward,
+        text_move_upward: this.text_move_upward,
+        text_move_downward: this.text_move_downward,
+        text_help_title: this.text_help_title,
+        text_about_title: this.text_about_title,
+        text_help_content: this.text_help_content,
+        text_about_content1: this.text_about_content1,
+        text_about_content2: this.text_about_content2,
+        text_about_content3: this.text_about_content3
       });
     }
   }
@@ -360,7 +873,7 @@ class BookmarksList extends React.Component {
       newCursor = this.bookmarks.length.toString();
       tmpbookmarks = this.bookmarks;
     } else {
-      oldCursor = cursor.split(".");
+      oldCursor = cursor.toString().split(".");
       if (oldCursor.length > 0) {
         tmpbookmarks = this.bookmarks;
         bookmark = tmpbookmarks[oldCursor[0]];
@@ -380,8 +893,8 @@ class BookmarksList extends React.Component {
     }
     newBookmark = {
       type: 'bookmark',
-      title: "ExampleTitle" + newCursor,
-      url: "https://example.example",
+      title: this.text_example_title + newCursor,
+      url: this.text_example_url,
       visible: 1
     };
     tmpbookmarks.push(newBookmark);
@@ -390,7 +903,7 @@ class BookmarksList extends React.Component {
   }
 
   editBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     if (oldCursor.length > 0) {
       bookmark = this.bookmarks[oldCursor[0]];
@@ -409,14 +922,60 @@ class BookmarksList extends React.Component {
       tmptitle: this.tmptitle,
       tmpurl: this.tmpurl,
       showedit: this.showedit,
-      showmove: this.showmove,  
-      showadd: this.showadd
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text_appname,
+      text_add_label: this.text_add_label,
+      text_settings_label: this.text_settings_label,
+      text_importexport_label: this.text_importexport_label,
+      text_help_label: this.text_help_label,
+      text_about_label: this.text_about_label,
+      text_edit_title: this.text_edit_title,
+      text_edit_type: this.text_edit_type,
+      text_edit_bookmark: this.text_edit_bookmark,
+      text_edit_folder: this.text_edit_folder,
+      text_edit_bookmark_title: this.text_edit_bookmark_title,
+      text_edit_url: this.text_edit_url,
+      text_delete: this.text_delete,
+      text_back: this.text_back,
+      text_save: this.text_save,
+      text_settings_title: this.text_settings_title,
+      text_settings_content1: this.text_settings_content1,
+      text_yes: this.text_yes,
+      text_no: this.text_no,
+      text_settings_showedit: this.text_settings_showedit,
+      text_settings_showmove: this.text_settings_showmove,
+      text_settings_showadd: this.text_settings_showadd,
+      text_language: this.text_language,
+      text_close_button: this.text_close_button,
+      text_importexport_title: this.text_importexport_title,
+      text_importexport_content: this.text_importexport_content,
+      text_import: this.text_import,
+      text_export: this.text_export,
+      text_error_loadfile: this.text_error_loadfile,
+      text_error_loadingfile: this.text_error_loadingfile,
+      text_example_title: this.text_example_title,
+      text_example_url: this.text_example_url,
+      text_open: this.text_open,
+      text_add: this.text_add,
+      text_edit: this.text_edit,
+      text_move_backward: this.text_move_backward,
+      text_move_forward: this.text_move_forward,
+      text_move_upward: this.text_move_upward,
+      text_move_downward: this.text_move_downward,
+      text_help_title: this.text_help_title,
+      text_about_title: this.text_about_title,
+      text_help_content: this.text_help_content,
+      text_about_content1: this.text_about_content1,
+      text_about_content2: this.text_about_content2,
+      text_about_content3: this.text_about_content3
     });
     const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#editbookmark'));
     dialog.open();
   }
 
-  swapBookmarks(a,b) {
+  swapBookmarks(a, b) {
     let tmpbookmark = {};
     tmpbookmark.type = a.type;
     tmpbookmark.title = a.title;
@@ -437,14 +996,14 @@ class BookmarksList extends React.Component {
     b.url = tmpbookmark.url;
     if (tmpbookmark.visible === 0) {
       b.visible = 0;
-    } else  {
+    } else {
       b.visible = tmpbookmark.visible + 1;
     }
     b.children = tmpbookmark.children;
   }
 
   movebackwardBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     let otherbookmark = null;
     let i = 0;
@@ -480,9 +1039,9 @@ class BookmarksList extends React.Component {
       }
     }
   }
- 
+
   moveforwardBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     let otherbookmark = null;
     let i = 0;
@@ -520,7 +1079,7 @@ class BookmarksList extends React.Component {
   }
 
   moveupwardBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     let otherbookmark = null;
     let i = 0;
@@ -571,7 +1130,7 @@ class BookmarksList extends React.Component {
   }
 
   movedownwardBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     let otherbookmark = null;
     let nextfolder = null;
@@ -626,7 +1185,7 @@ class BookmarksList extends React.Component {
   }
 
   deleteBookmark(cursor) {
-    let oldCursor = cursor.split(".");
+    let oldCursor = cursor.toString().split(".");
     let bookmark = null;
     if (oldCursor.length > 0) {
       bookmark = this.bookmarks[oldCursor[0]];
@@ -641,10 +1200,11 @@ class BookmarksList extends React.Component {
 
   importBookmarksReaderOnload(e) {
     let newBookmarks = [];
+    let text_error_loadingfile = this.text_error_loadingfile;
     parse(e.target.result,
       function (err, res) {
         if (err) {
-          alert('error loading file: ' + err);
+          alert(text_error_loadingfile + err);
         } else {
           for (let i = 0; i < res.bookmarks.length; i++) {
             if (res.bookmarks[i].ns_root === 'menu') {
@@ -678,7 +1238,7 @@ class BookmarksList extends React.Component {
     let file = e.target.files[0];
     if (!file) {
       if (e.target.files.length > 0) {
-        alert('error: cannot load file.');
+        alert(this.text_error_loadfile);
       }
       return;
     }
@@ -759,6 +1319,13 @@ class BookmarksList extends React.Component {
             moveforwardBookmark={this.moveforwardBookmark}
             moveupwardBookmark={this.moveupwardBookmark}
             movedownwardBookmark={this.movedownwardBookmark}
+            text_open={this.state.text_open}
+            text_add={this.state.text_add}
+            text_edit={this.state.text_edit}
+            text_move_backward={this.state.text_move_backward}
+            text_move_forward={this.state.text_move_forward}
+            text_move_upward={this.state.text_move_upward}
+            text_move_downward={this.state.text_move_downward}
           />);
       }
     }
@@ -767,12 +1334,12 @@ class BookmarksList extends React.Component {
         <TopAppBar>
           <TopAppBarRow>
             <TopAppBarSection align='start'>
-              <TopAppBarTitle>Bookmarks</TopAppBarTitle>
+              <TopAppBarTitle>{this.state.text_appname}</TopAppBarTitle>
             </TopAppBarSection>
             <TopAppBarSection align='end' role='toolbar'>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="add a bookmark"
+                  aria-label={this.state.text_add_label}
                   hasRipple
                   icon='add'
                   onClick={() => this.addBookmark()}
@@ -780,7 +1347,7 @@ class BookmarksList extends React.Component {
               </TopAppBarIcon>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="settings"
+                  aria-label={this.state.text_settings_label}
                   hasRipple
                   icon='settings'
                   onClick={() => this.Settings()}
@@ -788,7 +1355,7 @@ class BookmarksList extends React.Component {
               </TopAppBarIcon>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="import and export bookmarks"
+                  aria-label={this.state.text_importexport_label}
                   hasRipple
                   icon='import_export'
                   onClick={() => this.importExportBookmarks()}
@@ -796,7 +1363,7 @@ class BookmarksList extends React.Component {
               </TopAppBarIcon>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="help"
+                  aria-label={this.state.text_help_label}
                   hasRipple
                   icon='help'
                   onClick={() => this.help()}
@@ -804,7 +1371,7 @@ class BookmarksList extends React.Component {
               </TopAppBarIcon>
               <TopAppBarIcon actionItem tabIndex={0}>
                 <MaterialIcon
-                  aria-label="about"
+                  aria-label={this.state.text_about_label}
                   hasRipple
                   icon='info'
                   onClick={() => this.about()}
@@ -825,24 +1392,24 @@ class BookmarksList extends React.Component {
                 <h2 className="mdc-dialog__title" id="editbookmark-dialog-title">Edit bookmark</h2>
                 <div className="mdc-dialog__content" id="editbookmark-dialog-content">
 
-                  <label>Type:
-                          <input type="radio"
+                  <label>{this.state.text_edit_type}
+                    <input type="radio"
                       id="abktypebookmark"
                       name="tmptype"
                       value="bookmark"
                       checked={this.state.tmptype === 'bookmark'}
                       onChange={this.handleInputChange}>
-                    </input>bookmark
-                          <input type="radio"
+                    </input>{this.state.text_edit_bookmark}
+                    <input type="radio"
                       id="abktypefolder"
                       name="tmptype"
                       value="folder"
                       checked={this.state.tmptype === 'folder'}
                       onChange={this.handleInputChange}>
-                    </input>folder
-                        </label><br />
-                  <label>Title:
-                          <input type="text"
+                    </input>{this.state.text_edit_folder}
+                  </label><br />
+                  <label>{this.state.text_edit_bookmark_title}
+                    <input type="text"
                       id="abktitle"
                       name="tmptitle"
                       value={this.state.tmptitle}
@@ -850,8 +1417,8 @@ class BookmarksList extends React.Component {
                     </input>
                   </label><br />
                   {this.state.tmptype === 'bookmark' &&
-                    <label>URL:
-                           <input type="text"
+                    <label>{this.state.text_edit_url}
+                      <input type="text"
                         id="abkurl"
                         name="tmpurl"
                         value={this.state.tmpurl}
@@ -861,9 +1428,9 @@ class BookmarksList extends React.Component {
                   }
                 </div>
                 <footer className="mdc-dialog__actions">
-                  <input type="submit" value="Delete" onClick={event => this.deleteBookmark(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                  <input type="submit" value="Back" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                  <input type="submit" value="Save" onClick={event => this.handleSubmit(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                  <input type="submit" value={this.state.text_delete} onClick={event => this.deleteBookmark(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                  <input type="submit" value={this.state.text_back} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                  <input type="submit" value={this.state.text_save} onClick={event => this.handleSubmit(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
                 </footer>
               </div>
             </div>
@@ -872,17 +1439,17 @@ class BookmarksList extends React.Component {
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="settings">
             <div className="mdc-dialog__container">
               <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="settings-dialog-title">Settings</h2>
+                <h2 className="mdc-dialog__title" id="settings-dialog-title">{this.state.text_settings_title}</h2>
                 <div className="mdc-dialog__content" id="settings-dialog-content">
-                  <p>Here you can configure the application.</p>
-                  <label>Show edit buttons:
+                  <p>{this.state.text_settings_content1}</p>
+                  <label>{this.state.text_settings_showedit}
                     <input type="radio"
                       id="showedityes"
                       name="showedit"
                       value="yes"
                       checked={this.state.showedit === 'yes'}
                       onChange={this.handleSettingsChange}>
-                    </input>yes
+                    </input>{this.state.text_yes}
                     <input type="radio"
                       id="showeditno"
                       name="showedit"
@@ -892,43 +1459,158 @@ class BookmarksList extends React.Component {
                     </input>no
                   </label><br />
 
-                  <label>Show movement buttons:
+                  <label>{this.state.text_settings_showmove}
                     <input type="radio"
                       id="showmoveyes"
                       name="showmove"
                       value="yes"
                       checked={this.state.showmove === 'yes'}
                       onChange={this.handleSettingsChange}>
-                    </input>yes
+                    </input>{this.state.text_yes}
                     <input type="radio"
                       id="showmoveno"
                       name="showmove"
                       value="no"
                       checked={this.state.showmove === 'no'}
                       onChange={this.handleSettingsChange}>
-                    </input>no
+                    </input>{this.state.text_no}
                   </label><br />
 
-                  <label>Show "add" buttons in folders:
+                  <label>{this.state.text_settings_showadd}
                     <input type="radio"
                       id="showaddyes"
                       name="showadd"
                       value="yes"
                       checked={this.state.showadd === 'yes'}
                       onChange={this.handleSettingsChange}>
-                    </input>yes
+                    </input>{this.state.text_yes}
                     <input type="radio"
                       id="showaddno"
                       name="showadd"
                       value="no"
                       checked={this.state.showadd === 'no'}
                       onChange={this.handleSettingsChange}>
-                    </input>no
+                    </input>{this.state.text_no}
                   </label><br />
+                  <label for="lang">{this.state.text_language}</label>
+
+                  <select id="lang" name="lang" value={this.state.language} onChange={this.handleSettingsChange}>
+                  <option value="af">Afrikaans</option>
+                  <option value="sq">Albanian</option>
+                  <option value="am">Amharic</option>
+                  <option value="ar">Arabic</option>
+                  <option value="hy">Armenian</option>
+                  <option value="az">Azerbaijani</option>
+                  <option value="eu">Basque</option>
+                  <option value="be">Belarusian</option>
+                  <option value="bn">Bengali</option>
+                  <option value="bs">Bosnian</option>
+                  <option value="bg">Bulgarian</option>
+                  <option value="ca">Catalan</option>
+                  <option value="ceb">Cebuano</option>
+                  <option value="ny">Chichewa</option>
+                  <option value="zh-CN">Chinese (Simplified)</option>
+                  <option value="zh-TW">Chinese (Traditional)</option>
+                  <option value="zh">Chinese (Simplified)</option>
+                  <option value="co">Corsican</option>
+                  <option value="hr">Croatian</option>
+                  <option value="cs">Czech</option>
+                  <option value="da">Danish</option>
+                  <option value="nl">Dutch</option>
+                  <option value="en">English</option>
+                  <option value="eo">Esperanto</option>
+                  <option value="et">Estonian</option>
+                  <option value="tl">Filipino</option>
+                  <option value="fi">Finnish</option>
+                  <option value="fr">French</option>
+                  <option value="fy">Frisian</option>
+                  <option value="gl">Galician</option>
+                  <option value="ka">Georgian</option>
+                  <option value="de">German</option>
+                  <option value="el">Greek</option>
+                  <option value="gu">Gujarati</option>
+                  <option value="ht">Haitian Creole</option>
+                  <option value="ha">Hausa</option>
+                  <option value="haw">Hawaiian</option>
+                  <option value="iw">Hebrew</option>
+                  <option value="he">Hebrew</option>
+                  <option value="hi">Hindi</option>
+                  <option value="hmn">Hmong</option>
+                  <option value="hu">Hungarian</option>
+                  <option value="is">Icelandic</option>
+                  <option value="ig">Igbo</option>
+                  <option value="id">Indonesian</option>
+                  <option value="ga">Irish</option>
+                  <option value="it">Italian</option>
+                  <option value="ja">Japanese</option>
+                  <option value="jw">Javanese</option>
+                  <option value="kn">Kannada</option>
+                  <option value="kk">Kazakh</option>
+                  <option value="km">Khmer</option>
+                  <option value="rw">Kinyarwanda</option>
+                  <option value="ko">Korean</option>
+                  <option value="ku">Kurdish (Kurmanji)</option>
+                  <option value="ky">Kyrgyz</option>
+                  <option value="lo">Lao</option>
+                  <option value="la">Latin</option>
+                  <option value="lv">Latvian</option>
+                  <option value="lt">Lithuanian</option>
+                  <option value="lb">Luxembourgish</option>
+                  <option value="mk">Macedonian</option>
+                  <option value="mg">Malagasy</option>
+                  <option value="ms">Malay</option>
+                  <option value="ml">Malayalam</option>
+                  <option value="mt">Maltese</option>
+                  <option value="mi">Maori</option>
+                  <option value="mr">Marathi</option>
+                  <option value="mn">Mongolian</option>
+                  <option value="my">Myanmar (Burmese)</option>
+                  <option value="ne">Nepali</option>
+                  <option value="no">Norwegian</option>
+                  <option value="or">Odia (Oriya)</option>
+                  <option value="ps">Pashto</option>
+                  <option value="fa">Persian</option>
+                  <option value="pl">Polish</option>
+                  <option value="pt">Portuguese</option>
+                  <option value="pa">Punjabi</option>
+                  <option value="ro">Romanian</option>
+                  <option value="ru">Russian</option>
+                  <option value="sm">Samoan</option>
+                  <option value="gd">Scots Gaelic</option>
+                  <option value="sr">Serbian</option>
+                  <option value="st">Sesotho</option>
+                  <option value="sn">Shona</option>
+                  <option value="sd">Sindhi</option>
+                  <option value="si">Sinhala</option>
+                  <option value="sk">Slovak</option>
+                  <option value="sl">Slovenian</option>
+                  <option value="so">Somali</option>
+                  <option value="es">Spanish</option>
+                  <option value="su">Sundanese</option>
+                  <option value="sw">Swahili</option>
+                  <option value="sv">Swedish</option>
+                  <option value="tg">Tajik</option>
+                  <option value="ta">Tamil</option>
+                  <option value="tt">Tatar</option>
+                  <option value="te">Telugu</option>
+                  <option value="th">Thai</option>
+                  <option value="tr">Turkish</option>
+                  <option value="tk">Turkmen</option>
+                  <option value="uk">Ukrainian</option>
+                  <option value="ur">Urdu</option>
+                  <option value="ug">Uyghur</option>
+                  <option value="uz">Uzbek</option>
+                  <option value="vi">Vietnamese</option>
+                  <option value="cy">Welsh</option>
+                  <option value="xh">Xhosa</option>
+                  <option value="yi">Yiddish</option>
+                  <option value="yo">Yoruba</option>
+                  <option value="zu">Zulu</option>
+                  </select>
                 </div>
                 <footer className="mdc-dialog__actions">
                   <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-                    <span className="mdc-button__label">Close</span>
+                    <span className="mdc-button__label">{this.state.text_close_button}</span>
                   </button>
                 </footer>
               </div>
@@ -938,14 +1620,14 @@ class BookmarksList extends React.Component {
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="impexp">
             <div className="mdc-dialog__container">
               <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="impexp-dialog-title">Import/export</h2>
+                <h2 className="mdc-dialog__title" id="impexp-dialog-title">{this.state.text_importexport_title}</h2>
                 <div className="mdc-dialog__content" id="impexp-dialog-content">
-                  <p>Here you can import and export your bookmarks in Netscape format.</p>
+                  <p>{this.state.text_importexport_content}</p>
                 </div>
                 <footer className="mdc-dialog__actions">
-                  <label>Import:&nbsp;<input type="file" onChange={e => this.importBookmarks(e)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></label>
-                  <input type="submit" value="Back" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                  <input type="submit" value="Export" onClick={event => this.exportBookmarks()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                  <label>{this.state.text_import}&nbsp;<input type="file" onChange={e => this.importBookmarks(e)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></label>
+                  <input type="submit" value={this.state.text_back} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                  <input type="submit" value={this.state.text_export} onClick={event => this.exportBookmarks()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
                 </footer>
               </div>
             </div>
@@ -954,30 +1636,13 @@ class BookmarksList extends React.Component {
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="help">
             <div className="mdc-dialog__container">
               <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="help-dialog-title">Help</h2>
+                <h2 className="mdc-dialog__title" id="help-dialog-title">{this.state.text_help_title}</h2>
                 <div className="mdc-dialog__content" id="help-dialog-content">
-                  <p>Bookmarks Manager is an application that helps to save and edit internet bookmarks.</p>
-                  <p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
-                  <p>Press the "open" button near a bookmark to open the related URL.</p>
-                  <p>Press the "add" button inside a folder to add a new element to it.</p>
-                  <p>For both bookmarks and folders, press the "edit" button to modify them,
-                    press the "move backward" button to exchange the position with the previous element,
-                    press the "move forward" button to exchange the position with the next element,
-                    press the "move upward" button to move the element out of the folder where it currently is,
-                    or press the "move downward" button to move the element inside the next subfolder. 
-                  </p>
-                  <p>In the settings menu, accessible after clicking on the "settings" icon, you can hide or show the editing, movement and addition buttons.</p>
-                  <p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers. When importing the bookmarks from a file, the current bookmarks will be deleted and overwritten.</p>
-                  <p>Bookmarks Manager is a Progressive Web Application, which means that it runs inside a browser.
-                    When you install it, while the browser components are not shown, it still runs inside a browser.
-                    The bookmarks are saved in the browser’s localStorage for the bookmarks.marcoparrone.com domain.
-                    localStorage works fine with Chrome, Edge and Firefox browsers. Other browsers may delete localStorage after some time.
-                    Android by default uses Chrome, Windows by default uses Edge. Bookmarks Manager currently is not supported on Apple products.
-                    With the purpose to help to prevent the loss of the bookmarks, it is suggested to make a backup using the "export" functionality, every time you make some modifications that you don't want to lose.</p>
+                {HtmlParse(this.state.text_help_content)}
                 </div>
                 <footer className="mdc-dialog__actions">
                   <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-                    <span className="mdc-button__label">Close</span>
+                    <span className="mdc-button__label">{this.state.text_close_button}</span>
                   </button>
                 </footer>
               </div>
@@ -989,21 +1654,15 @@ class BookmarksList extends React.Component {
           <div className="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content" id="about">
             <div className="mdc-dialog__container">
               <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="about-dialog-title">About</h2>
+                <h2 className="mdc-dialog__title" id="about-dialog-title">{this.state.text_about_title}</h2>
                 <div className="mdc-dialog__content" id="about-dialog-content">
-                  <p>Copyright &copy; 2017,2019,2020,2021 Marco Parrone.</p>
-                  <p>All Rights Reserved.</p>
-                  <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-                  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-                  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                          SOFTWARE.</p>
+                {HtmlParse(this.state.text_about_content1)}
+                {HtmlParse(this.state.text_about_content2)}
+                {HtmlParse(this.state.text_about_content3)}
                 </div>
                 <footer className="mdc-dialog__actions">
                   <button type="button" className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-                    <span className="mdc-button__label">Close</span>
+                    <span className="mdc-button__label">{this.state.text_close_button}</span>
                   </button>
                 </footer>
               </div>
