@@ -418,7 +418,7 @@ class BookmarksList extends React.Component {
         this.text_error_loadfile = banana.i18n('text_error_loadfile');
         this.text_error_loadingfile = banana.i18n('text_error_loadingfile');
         this.text_example_title = banana.i18n('text_example_title');
-        this.text_example_url = banana.i18n('text_example_url');
+        // this.text_example_url = banana.i18n('text_example_url'); // The URL is not translated correctly with the tool which I'm using now.
         this.text_open = banana.i18n('text_open');
         this.text_add = banana.i18n('text_add');
         this.text_edit = banana.i18n('text_edit');
