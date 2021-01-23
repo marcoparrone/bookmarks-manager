@@ -1098,7 +1098,7 @@ class BookmarksList extends React.Component {
                       onChange={this.handleSettingsChange}>
                     </input>{this.state.text_no}
                   </label><br />
-                  <label for="lang">{this.state.text_language}</label>
+                  <label htmlFor="lang">{this.state.text_language}</label>
 
                   <select id="lang" name="lang" lang="en" value={this.state.language} onChange={this.handleSettingsChange}>
                   <option value="af">Afrikaans</option>
