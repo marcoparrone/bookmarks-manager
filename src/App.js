@@ -22,86 +22,9 @@ import parse from 'bookmarks-parser';
 
 import saveAs from 'file-saver';
 
-import Banana from 'banana-i18n';
 import HtmlParse from 'html-react-parser';
 
 import get_timestamp from './timestamp';
-
-const text_appname = 'Bookmarks';
-const text_add_label = 'add a bookmark';
-const text_settings_label = 'settings';
-const text_importexport_label = 'import and export bookmarks';
-const text_help_label = 'help';
-const text_about_label = 'about';
-const text_edit_title = 'Edit bookmark';
-const text_edit_type = 'Type:';
-const text_edit_bookmark = 'bookmark';
-const text_edit_folder = 'folder';
-const text_edit_bookmark_title = 'Title:';
-const text_edit_url = 'URL:';
-const text_delete = 'Delete';
-const text_back = 'Back';
-const text_save = 'Save';
-const text_settings_title = 'Settings';
-const text_settings_content1 = 'Here you can configure the application.';
-const text_yes = 'yes';
-const text_no = 'no';
-const text_settings_showedit = 'Show edit buttons:';
-const text_settings_showmove = 'Show movement buttons:';
-const text_settings_showadd = 'Show "add" buttons in folders:';
-const text_language = 'Choose language:';
-const text_close_button = 'Close';
-const text_importexport_title = 'Import/export';
-const text_importexport_content = 'Here you can import and export your bookmarks in Netscape format.';
-const text_import = 'Import:';
-const text_export = 'Export';
-const text_error_loadfile = 'error: cannot load file.';
-const text_error_loadingfile = 'error loading file: ';
-const text_example_title = 'Example Title';
-const text_example_url = 'https://example.example';
-const text_open = 'Open';
-const text_add = 'Add';
-const text_edit = 'Edit';
-const text_move_backward = 'Move Backward';
-const text_move_forward = 'Move Forward';
-const text_move_upward = 'Move Upward';
-const text_move_downward = 'Move Downward';
-const text_help_title = 'Help';
-const text_about_title = 'About';
-const text_help_content = `<p>Bookmarks Manager is an application that helps to save and edit internet bookmarks.</p>
-<p>To create a new bookmark, or a new folder, press the "plus" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p>
-<p>Press the "open" button near a bookmark to open the related URL.</p>
-<p>Press the "add" button inside a folder to add a new element to it.</p>
-<p>For both bookmarks and folders, press the "edit" button to modify them,
-press the "move backward" button to exchange the position with the previous element,
-press the "move forward" button to exchange the position with the next element,
-press the "move upward" button to move the element out of the folder where it currently is,
-or press the "move downward" button to move the element inside the next subfolder. 
-</p>
-<p>In the settings menu, accessible after clicking on the "settings" icon, you can hide or show the editing, movement and addition buttons.  It is also possible to change the language of the user interface.</p>
-<p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers. When importing the bookmarks from a file, the current bookmarks will be deleted and overwritten.</p>
-<p>Bookmarks Manager is a Progressive Web Application, which means that it runs inside a browser.
-When you install it, while the browser components are not shown, it still runs inside a browser.
-The bookmarks are saved in the browser’s localStorage for the bookmarks.marcoparrone.com domain.
-localStorage works fine with Chrome, Edge and Firefox browsers. Other browsers may delete localStorage after some time.
-Android by default uses Chrome, Windows by default uses Edge. Bookmarks Manager currently is not supported on Apple products.
-With the purpose to help to prevent the loss of the bookmarks, it is suggested to make a backup using the "export" functionality, every time you make some modifications that you don't want to lose.</p>`;
-const text_about_content1 = `<p>Copyright © 2017,2019,2020,2021 Marco Parrone.
-<br />All Rights Reserved.</p>
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p>`;
-const text_about_content2 = `
-<p>THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>
-`;
-const text_about_content3 = `
-<p>This web app has been translated for your convenience using translation software powered by Google Translate. Reasonable efforts have been made to provide an accurate translation, however, no automated translation is perfect nor is it intended to replace human translators. Translations are provided as a service to users of the marcoparrone.com website, and are provided "as is." No warranty of any kind, either expressed or implied, is made as to the accuracy, reliability, or correctness of any translations made from English into any other language. Some content (such as images, videos, Flash, etc.) may not be accurately translated due to the limitations of the translation software.</p>
-<p>The official text is the English version of the website. Any discrepancies or differences created in the translation are not binding and have no legal effect for compliance or enforcement purposes. If any questions arise related to the accuracy of the information contained in the translated website, refer to the English version of the website which is the official version.</p>
-`;
 
 const supported_languages = ['en', 'af', 'sq', 'am', 'ar', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'bg', 'ca', 'ceb', 'ny', 'zh-CN', 'zh-TW', 'co', 'hr', 'cs', 'da', 'nl', 'eo', 'et', 'tl', 'fi', 'fr', 'fy', 'gl', 'ka', 'de', 'el', 'gu', 'ht', 'ha', 'haw', 'iw', 'hi', 'hmn', 'hu', 'is', 'ig', 'id', 'ga', 'it', 'ja', 'jw', 'kn', 'kk', 'km', 'rw', 'ko', 'ku', 'ky', 'lo', 'la', 'lv', 'lt', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'mi', 'mr', 'mn', 'my', 'ne', 'no', 'or', 'ps', 'fa', 'pl', 'pt', 'pa', 'ro', 'ru', 'sm', 'gd', 'sr', 'st', 'sn', 'sd', 'si', 'sk', 'sl', 'so', 'es', 'su', 'sw', 'sv', 'tg', 'ta', 'tt', 'te', 'th', 'tr', 'tk', 'uk', 'ur', 'ug', 'uz', 'vi', 'cy', 'xh', 'yi', 'yo', 'zu', 'he', 'zh'];
 
@@ -241,53 +164,54 @@ class BookmarksList extends React.Component {
     this.showedit = 'no';
     this.showmove = 'no';
     this.showadd = 'yes';
-
-    this.language = '';
-    this.text_appname = text_appname;
-    this.text_add_label = text_add_label;
-    this.text_settings_label = text_settings_label;
-    this.text_importexport_label = text_importexport_label;
-    this.text_help_label = text_help_label;
-    this.text_about_label = text_about_label;
-    this.text_edit_title = text_edit_title;
-    this.text_edit_type = text_edit_type;
-    this.text_edit_bookmark = text_edit_bookmark;
-    this.text_edit_folder = text_edit_folder;
-    this.text_edit_bookmark_title = text_edit_bookmark_title;
-    this.text_edit_url = text_edit_url;
-    this.text_delete = text_delete;
-    this.text_back = text_back;
-    this.text_save = text_save;
-    this.text_settings_title = text_settings_title;
-    this.text_settings_content1 = text_settings_content1;
-    this.text_yes = text_yes;
-    this.text_no = text_no;
-    this.text_settings_showedit = text_settings_showedit;
-    this.text_settings_showmove = text_settings_showmove;
-    this.text_settings_showadd = text_settings_showadd;
-    this.text_language = text_language;
-    this.text_close_button = text_close_button;
-    this.text_importexport_title = text_importexport_title;
-    this.text_importexport_content = text_importexport_content;
-    this.text_import = text_import;
-    this.text_export = text_export;
-    this.text_error_loadfile = text_error_loadfile;
-    this.text_error_loadingfile = text_error_loadingfile;
-    this.text_example_title = text_example_title;
-    this.text_example_url = text_example_url;
-    this.text_open = text_open;
-    this.text_add = text_add;
-    this.text_edit = text_edit;
-    this.text_move_backward = text_move_backward;
-    this.text_move_forward = text_move_forward;
-    this.text_move_upward = text_move_upward;
-    this.text_move_downward = text_move_downward;
-    this.text_help_title = text_help_title;
-    this.text_about_title = text_about_title;
-    this.text_help_content = text_help_content;
-    this.text_about_content1 = text_about_content1;
-    this.text_about_content2 = text_about_content2;
-    this.text_about_content3 = text_about_content3;
+    this.language = 'en';
+    this.text =  {
+      "text_appname": "Bookmarks",
+      "text_add_label": "add a bookmark",
+      "text_settings_label": "settings",
+      "text_importexport_label": "import and export bookmarks",
+      "text_help_label": "help",
+      "text_about_label": "about",
+      "text_edit_title": "Edit bookmark",
+      "text_edit_type": "Type:",
+      "text_edit_bookmark": "bookmark",
+      "text_edit_folder": "folder",
+      "text_edit_bookmark_title": "Title:",
+      "text_edit_url": "URL:",
+      "text_delete": "Delete",
+      "text_back": "Back",
+      "text_save": "Save",
+      "text_settings_title": "Settings",
+      "text_settings_content1": "Here you can configure the application.",
+      "text_yes": "yes",
+      "text_no": "no",
+      "text_settings_showedit": "Show edit buttons:",
+      "text_settings_showmove": "Show movement buttons:",
+      "text_settings_showadd": "Show \"add\" buttons in folders:",
+      "text_language": "Choose language:",
+      "text_close_button": "Close",
+      "text_importexport_title": "Import/export",
+      "text_importexport_content": "Here you can import and export your bookmarks in Netscape format.",
+      "text_import": "Import:",
+      "text_export": "Export",
+      "text_error_loadfile": "error: cannot load file.",
+      "text_error_loadingfile": "error loading file: ",
+      "text_example_title": "Example Title",
+      "text_example_url": "https://example.example",
+      "text_open": "Open",
+      "text_add": "Add",
+      "text_edit": "Edit",
+      "text_move_backward": "Move Backward",
+      "text_move_forward": "Move Forward",
+      "text_move_upward": "Move Upward",
+      "text_move_downward": "Move Downward",
+      "text_help_title": "Help",
+      "text_about_title": "About",
+      "text_help_content": "<p>Bookmarks Manager is an application that helps to save and edit internet bookmarks.</p> <p>To create a new bookmark, or a new folder, press the \"plus\" icon: choose between bookmark and folder, insert the title and eventually the URL, then press save to save the changes, or press delete to delete the bookmark, or back to skip the changes but keep the bookmark.</p> <p>Press the \"open\" button near a bookmark to open the related URL.</p> <p>Press the \"add\" button inside a folder to add a new element to it.</p> <p>For both bookmarks and folders, press the \"edit\" button to modify them, press the \"move backward\" button to exchange the position with the previous element, press the \"move forward\" button to exchange the position with the next element, press the \"move upward\" button to move the element out of the folder where it currently is, or press the \"move downward\" button to move the element inside the next subfolder.  </p> <p>In the settings menu, accessible after clicking on the \"settings\" icon, you can hide or show the editing, movement and addition buttons. It is also possible to change the language of the user interface.</p> <p>To import or export the bookmarks, press on the import/export icon. The HTML Netscape Bookmarks format is supported, so it is possible to import the bookmarks exported by the major web browsers. When importing the bookmarks from a file, the current bookmarks will be deleted and overwritten.</p> <p>Bookmarks Manager is a Progressive Web Application, which means that it runs inside a browser. When you install it, while the browser components are not shown, it still runs inside a browser. The bookmarks are saved in the browser’s localStorage for the bookmarks.marcoparrone.com domain. localStorage works fine with Chrome, Edge and Firefox browsers. Other browsers may delete localStorage after some time. Android by default uses Chrome, Windows by default uses Edge. Bookmarks Manager currently is not supported on Apple products. With the purpose to help to prevent the loss of the bookmarks, it is suggested to make a backup using the \"export\" functionality, every time you make some modifications that you don't want to lose.</p>",
+      "text_about_content1": "<p>Copyright © 2017,2019,2020,2021 Marco Parrone.<br />All Rights Reserved.</p><p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>",
+      "text_about_content2": "<p>THIS SERVICE MAY CONTAIN TRANSLATIONS POWERED BY GOOGLE. GOOGLE DISCLAIMS ALL WARRANTIES RELATED TO THE TRANSLATIONS, EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF ACCURACY, RELIABILITY, AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>",
+      "text_about_content3": "<p>This web app has been translated for your convenience using translation software powered by Google Translate. Reasonable efforts have been made to provide an accurate translation, however, no automated translation is perfect nor is it intended to replace human translators. Translations are provided as a service to users of the marcoparrone.com website, and are provided \"as is.\" No warranty of any kind, either expressed or implied, is made as to the accuracy, reliability, or correctness of any translations made from English into any other language. Some content (such as images, videos, Flash, etc.) may not be accurately translated due to the limitations of the translation software.</p><p>The official text is the English version of the website. Any discrepancies or differences created in the translation are not binding and have no legal effect for compliance or enforcement purposes. If any questions arise related to the accuracy of the information contained in the translated website, refer to the English version of the website which is the official version.</p>"
+  };
 
     this.state = {
       bookmarks: this.bookmarks,
@@ -299,51 +223,51 @@ class BookmarksList extends React.Component {
       showmove: this.showmove,
       showadd: this.showadd,
       language: this.language,
-      text_appname: this.text_appname,
-      text_add_label: this.text_add_label,
-      text_settings_label: this.text_settings_label,
-      text_importexport_label: this.text_importexport_label,
-      text_help_label: this.text_help_label,
-      text_about_label: this.text_about_label,
-      text_edit_title: this.text_edit_title,
-      text_edit_type: this.text_edit_type,
-      text_edit_bookmark: this.text_edit_bookmark,
-      text_edit_folder: this.text_edit_folder,
-      text_edit_bookmark_title: this.text_edit_bookmark_title,
-      text_edit_url: this.text_edit_url,
-      text_delete: this.text_delete,
-      text_back: this.text_back,
-      text_save: this.text_save,
-      text_settings_title: this.text_settings_title,
-      text_settings_content1: this.text_settings_content1,
-      text_yes: this.text_yes,
-      text_no: this.text_no,
-      text_settings_showedit: this.text_settings_showedit,
-      text_settings_showmove: this.text_settings_showmove,
-      text_settings_showadd: this.text_settings_showadd,
-      text_language: this.text_language,
-      text_close_button: this.text_close_button,
-      text_importexport_title: this.text_importexport_title,
-      text_importexport_content: this.text_importexport_content,
-      text_import: this.text_import,
-      text_export: this.text_export,
-      text_error_loadfile: this.text_error_loadfile,
-      text_error_loadingfile: this.text_error_loadingfile,
-      text_example_title: this.text_example_title,
-      text_example_url: this.text_example_url,
-      text_open: this.text_open,
-      text_add: this.text_add,
-      text_edit: this.text_edit,
-      text_move_backward: this.text_move_backward,
-      text_move_forward: this.text_move_forward,
-      text_move_upward: this.text_move_upward,
-      text_move_downward: this.text_move_downward,
-      text_help_title: this.text_help_title,
-      text_about_title: this.text_about_title,
-      text_help_content: this.text_help_content,
-      text_about_content1: this.text_about_content1,
-      text_about_content2: this.text_about_content2,
-      text_about_content3: this.text_about_content3
+      text_appname: this.text['text_appname'],
+      text_add_label: this.text['text_add_label'],
+      text_settings_label: this.text['text_settings_label'],
+      text_importexport_label: this.text['text_importexport_label'],
+      text_help_label: this.text['text_help_label'],
+      text_about_label: this.text['text_about_label'],
+      text_edit_title: this.text['text_edit_title'],
+      text_edit_type: this.text['text_edit_type'],
+      text_edit_bookmark: this.text['text_edit_bookmark'],
+      text_edit_folder: this.text['text_edit_folder'],
+      text_edit_bookmark_title: this.text['text_edit_bookmark_title'],
+      text_edit_url: this.text['text_edit_url'],
+      text_delete: this.text['text_delete'],
+      text_back: this.text['text_back'],
+      text_save: this.text['text_save'],
+      text_settings_title: this.text['text_settings_title'],
+      text_settings_content1: this.text['text_settings_content1'],
+      text_yes: this.text['text_yes'],
+      text_no: this.text['text_no'],
+      text_settings_showedit: this.text['text_settings_showedit'],
+      text_settings_showmove: this.text['text_settings_showmove'],
+      text_settings_showadd: this.text['text_settings_showadd'],
+      text_language: this.text['text_language'],
+      text_close_button: this.text['text_close_button'],
+      text_importexport_title: this.text['text_importexport_title'],
+      text_importexport_content: this.text['text_importexport_content'],
+      text_import: this.text['text_import'],
+      text_export: this.text['text_export'],
+      text_error_loadfile: this.text['text_error_loadfile'],
+      text_error_loadingfile: this.text['text_error_loadingfile'],
+      text_example_title: this.text['text_example_title'],
+      text_example_url: this.text['text_example_url'],
+      text_open: this.text['text_open'],
+      text_add: this.text['text_add'],
+      text_edit: this.text['text_edit'],
+      text_move_backward: this.text['text_move_backward'],
+      text_move_forward: this.text['text_move_forward'],
+      text_move_upward: this.text['text_move_upward'],
+      text_move_downward: this.text['text_move_downward'],
+      text_help_title: this.text['text_help_title'],
+      text_about_title: this.text['text_about_title'],
+      text_help_content: this.text['text_help_content'],
+      text_about_content1: this.text['text_about_content1'],
+      text_about_content2: this.text['text_about_content2'],
+      text_about_content3: this.text['text_about_content3']
     };
     this.deleteBookmark = this.deleteBookmark.bind(this);
     this.addBookmark = this.addBookmark.bind(this);
@@ -363,21 +287,72 @@ class BookmarksList extends React.Component {
     this.importBookmarksReaderOnload = this.importBookmarksReaderOnload.bind(this);
     this.importBookmarks = this.importBookmarks.bind(this);
     this.exportBookmarks = this.exportBookmarks.bind(this);
+    this.i18n_init = this.i18n_init.bind(this);
+    this.saveState = this.saveState.bind(this);
     this.bookmarksListRef = React.createRef();
   }
 
+  saveState () {
+    this.setState({
+      bookmarks: this.bookmarks,
+      cursor: this.cursor,
+      tmptype: this.tmptype,
+      tmptitle: this.tmptitle,
+      tmpurl: this.tmpurl,
+      showedit: this.showedit,
+      showmove: this.showmove,
+      showadd: this.showadd,
+      language: this.language,
+      text_appname: this.text['text_appname'],
+      text_add_label: this.text['text_add_label'],
+      text_settings_label: this.text['text_settings_label'],
+      text_importexport_label: this.text['text_importexport_label'],
+      text_help_label: this.text['text_help_label'],
+      text_about_label: this.text['text_about_label'],
+      text_edit_title: this.text['text_edit_title'],
+      text_edit_type: this.text['text_edit_type'],
+      text_edit_bookmark: this.text['text_edit_bookmark'],
+      text_edit_folder: this.text['text_edit_folder'],
+      text_edit_bookmark_title: this.text['text_edit_bookmark_title'],
+      text_edit_url: this.text['text_edit_url'],
+      text_delete: this.text['text_delete'],
+      text_back: this.text['text_back'],
+      text_save: this.text['text_save'],
+      text_settings_title: this.text['text_settings_title'],
+      text_settings_content1: this.text['text_settings_content1'],
+      text_yes: this.text['text_yes'],
+      text_no: this.text['text_no'],
+      text_settings_showedit: this.text['text_settings_showedit'],
+      text_settings_showmove: this.text['text_settings_showmove'],
+      text_settings_showadd: this.text['text_settings_showadd'],
+      text_language: this.text['text_language'],
+      text_close_button: this.text['text_close_button'],
+      text_importexport_title: this.text['text_importexport_title'],
+      text_importexport_content: this.text['text_importexport_content'],
+      text_import: this.text['text_import'],
+      text_export: this.text['text_export'],
+      text_error_loadfile: this.text['text_error_loadfile'],
+      text_error_loadingfile: this.text['text_error_loadingfile'],
+      text_example_title: this.text['text_example_title'],
+      text_example_url: this.text['text_example_url'],
+      text_open: this.text['text_open'],
+      text_add: this.text['text_add'],
+      text_edit: this.text['text_edit'],
+      text_move_backward: this.text['text_move_backward'],
+      text_move_forward: this.text['text_move_forward'],
+      text_move_upward: this.text['text_move_upward'],
+      text_move_downward: this.text['text_move_downward'],
+      text_help_title: this.text['text_help_title'],
+      text_about_title: this.text['text_about_title'],
+      text_help_content: this.text['text_help_content'],
+      text_about_content1: this.text['text_about_content1'],
+      text_about_content2: this.text['text_about_content2'],
+      text_about_content3: this.text['text_about_content3']
+    });
+  }
+
   i18n_init() {
-    let banana = new Banana();
-
-    if (this.language === '' && navigator && navigator.languages) {
-      this.language = navigator.languages.find(lang => { return supported_languages.includes(lang) });
-      if (!this.language) {
-        this.language = 'en';
-      }
-    }
-
-    banana.setLocale(this.language);
-    fetch('i18n/' + banana.locale + '.json')
+    fetch('i18n/' + this.language + '.json')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -386,113 +361,12 @@ class BookmarksList extends React.Component {
         }
       })
       .then((messages) => {
-        banana.load(messages, banana.locale);
-        this.text_appname = banana.i18n('text_appname');
-        this.text_add_label = banana.i18n('text_add_label');
-        this.text_settings_label = banana.i18n('text_settings_label');
-        this.text_importexport_label = banana.i18n('text_importexport_label');
-        this.text_help_label = banana.i18n('text_help_label');
-        this.text_about_label = banana.i18n('text_about_label');
-        this.text_edit_title = banana.i18n('text_edit_title');
-        this.text_edit_type = banana.i18n('text_edit_type');
-        this.text_edit_bookmark = banana.i18n('text_edit_bookmark');
-        this.text_edit_folder = banana.i18n('text_edit_folder');
-        this.text_edit_bookmark_title = banana.i18n('text_edit_bookmark_title');
-        this.text_edit_url = banana.i18n('text_edit_url');
-        this.text_delete = banana.i18n('text_delete');
-        this.text_back = banana.i18n('text_back');
-        this.text_save = banana.i18n('text_save');
-        this.text_settings_title = banana.i18n('text_settings_title');
-        this.text_settings_content1 = banana.i18n('text_settings_content1');
-        this.text_yes = banana.i18n('text_yes');
-        this.text_no = banana.i18n('text_no');
-        this.text_settings_showedit = banana.i18n('text_settings_showedit');
-        this.text_settings_showmove = banana.i18n('text_settings_showmove');
-        this.text_settings_showadd = banana.i18n('text_settings_showadd');
-        this.text_language = banana.i18n('text_language');
-        this.text_close_button = banana.i18n('text_close_button');
-        this.text_importexport_title = banana.i18n('text_importexport_title');
-        this.text_importexport_content = banana.i18n('text_importexport_content');
-        this.text_import = banana.i18n('text_import');
-        this.text_export = banana.i18n('text_export');
-        this.text_error_loadfile = banana.i18n('text_error_loadfile');
-        this.text_error_loadingfile = banana.i18n('text_error_loadingfile');
-        this.text_example_title = banana.i18n('text_example_title');
-        // this.text_example_url = banana.i18n('text_example_url'); // The URL is not translated correctly with the tool which I'm using now.
-        this.text_open = banana.i18n('text_open');
-        this.text_add = banana.i18n('text_add');
-        this.text_edit = banana.i18n('text_edit');
-        this.text_move_backward = banana.i18n('text_move_backward');
-        this.text_move_forward = banana.i18n('text_move_forward');
-        this.text_move_upward = banana.i18n('text_move_upward');
-        this.text_move_downward = banana.i18n('text_move_downward');
-        this.text_help_title = banana.i18n('text_help_title');
-        this.text_about_title = banana.i18n('text_about_title');
-        this.text_help_content = banana.i18n('text_help_content');
-        this.text_about_content1 = banana.i18n('text_about_content1');
-        this.text_about_content2 = banana.i18n('text_about_content2');
-        this.text_about_content3 = banana.i18n('text_about_content3');
-        this.setState({
-          bookmarks: this.bookmarks,
-          cursor: this.cursor,
-          tmptype: this.tmptype,
-          tmptitle: this.tmptitle,
-          tmpurl: this.tmpurl,
-          showedit: this.showedit,
-          showmove: this.showmove,
-          showadd: this.showadd,
-          language: this.language,
-          text_appname: this.text_appname,
-          text_add_label: this.text_add_label,
-          text_settings_label: this.text_settings_label,
-          text_importexport_label: this.text_importexport_label,
-          text_help_label: this.text_help_label,
-          text_about_label: this.text_about_label,
-          text_edit_title: this.text_edit_title,
-          text_edit_type: this.text_edit_type,
-          text_edit_bookmark: this.text_edit_bookmark,
-          text_edit_folder: this.text_edit_folder,
-          text_edit_bookmark_title: this.text_edit_bookmark_title,
-          text_edit_url: this.text_edit_url,
-          text_delete: this.text_delete,
-          text_back: this.text_back,
-          text_save: this.text_save,
-          text_settings_title: this.text_settings_title,
-          text_settings_content1: this.text_settings_content1,
-          text_yes: this.text_yes,
-          text_no: this.text_no,
-          text_settings_showedit: this.text_settings_showedit,
-          text_settings_showmove: this.text_settings_showmove,
-          text_settings_showadd: this.text_settings_showadd,
-          text_language: this.text_language,
-          text_close_button: this.text_close_button,
-          text_importexport_title: this.text_importexport_title,
-          text_importexport_content: this.text_importexport_content,
-          text_import: this.text_import,
-          text_export: this.text_export,
-          text_error_loadfile: this.text_error_loadfile,
-          text_error_loadingfile: this.text_error_loadingfile,
-          text_example_title: this.text_example_title,
-          text_example_url: this.text_example_url,
-          text_open: this.text_open,
-          text_add: this.text_add,
-          text_edit: this.text_edit,
-          text_move_backward: this.text_move_backward,
-          text_move_forward: this.text_move_forward,
-          text_move_upward: this.text_move_upward,
-          text_move_downward: this.text_move_downward,
-          text_help_title: this.text_help_title,
-          text_about_title: this.text_about_title,
-          text_help_content: this.text_help_content,
-          text_about_content1: this.text_about_content1,
-          text_about_content2: this.text_about_content2,
-          text_about_content3: this.text_about_content3
-        });
-
+        this.text = messages;
+        this.saveState();
         localStorage.setItem('language', this.language);
       })
       .catch(error => {
-        console.error('Cannot fetch i18n/' + banana.locale + '.json: ', error);
+        console.error('Cannot fetch i18n/' + this.language + '.json: ', error);
       });
   }
 
@@ -514,6 +388,13 @@ class BookmarksList extends React.Component {
 
     if (supported_languages.includes(language)) {
       this.language = language;
+    } else {
+        if (navigator && navigator.languages) {
+            this.language = navigator.languages.find(lang => {return supported_languages.includes(lang)});
+            if (! this.language) {
+                this.language = 'en';
+            }
+        }
     }
     
     // Localize the User Interface.
@@ -558,62 +439,7 @@ class BookmarksList extends React.Component {
     }
 
     // Save in current state.
-    this.setState({
-      bookmarks: this.bookmarks,
-      cursor: this.cursor,
-      tmptype: this.tmptype,
-      tmptitle: this.tmptitle,
-      tmpurl: this.tmpurl,
-      showedit: this.showedit,
-      showmove: this.showmove,
-      showadd: this.showadd,
-      language: this.language,
-      text_appname: this.text_appname,
-      text_add_label: this.text_add_label,
-      text_settings_label: this.text_settings_label,
-      text_importexport_label: this.text_importexport_label,
-      text_help_label: this.text_help_label,
-      text_about_label: this.text_about_label,
-      text_edit_title: this.text_edit_title,
-      text_edit_type: this.text_edit_type,
-      text_edit_bookmark: this.text_edit_bookmark,
-      text_edit_folder: this.text_edit_folder,
-      text_edit_bookmark_title: this.text_edit_bookmark_title,
-      text_edit_url: this.text_edit_url,
-      text_delete: this.text_delete,
-      text_back: this.text_back,
-      text_save: this.text_save,
-      text_settings_title: this.text_settings_title,
-      text_settings_content1: this.text_settings_content1,
-      text_yes: this.text_yes,
-      text_no: this.text_no,
-      text_settings_showedit: this.text_settings_showedit,
-      text_settings_showmove: this.text_settings_showmove,
-      text_settings_showadd: this.text_settings_showadd,
-      text_language: this.text_language,
-      text_close_button: this.text_close_button,
-      text_importexport_title: this.text_importexport_title,
-      text_importexport_content: this.text_importexport_content,
-      text_import: this.text_import,
-      text_export: this.text_export,
-      text_error_loadfile: this.text_error_loadfile,
-      text_error_loadingfile: this.text_error_loadingfile,
-      text_example_title: this.text_example_title,
-      text_example_url: this.text_example_url,
-      text_open: this.text_open,
-      text_add: this.text_add,
-      text_edit: this.text_edit,
-      text_move_backward: this.text_move_backward,
-      text_move_forward: this.text_move_forward,
-      text_move_upward: this.text_move_upward,
-      text_move_downward: this.text_move_downward,
-      text_help_title: this.text_help_title,
-      text_about_title: this.text_about_title,
-      text_help_content: this.text_help_content,
-      text_about_content1: this.text_about_content1,
-      text_about_content2: this.text_about_content2,
-      text_about_content3: this.text_about_content3
-    });
+    this.saveState();
 
     // Save in local storage, skipping deleted bookmarks.
     for (let i = 0; i < this.bookmarks.length; i++) {
@@ -655,62 +481,7 @@ class BookmarksList extends React.Component {
       default:
         break;
     }
-    this.setState({
-      bookmarks: this.bookmarks,
-      cursor: this.cursor,
-      tmptype: this.tmptype,
-      tmptitle: this.tmptitle,
-      tmpurl: this.tmpurl,
-      showedit: this.showedit,
-      showmove: this.showmove,
-      showadd: this.showadd,
-      language: this.language,
-      text_appname: this.text_appname,
-      text_add_label: this.text_add_label,
-      text_settings_label: this.text_settings_label,
-      text_importexport_label: this.text_importexport_label,
-      text_help_label: this.text_help_label,
-      text_about_label: this.text_about_label,
-      text_edit_title: this.text_edit_title,
-      text_edit_type: this.text_edit_type,
-      text_edit_bookmark: this.text_edit_bookmark,
-      text_edit_folder: this.text_edit_folder,
-      text_edit_bookmark_title: this.text_edit_bookmark_title,
-      text_edit_url: this.text_edit_url,
-      text_delete: this.text_delete,
-      text_back: this.text_back,
-      text_save: this.text_save,
-      text_settings_title: this.text_settings_title,
-      text_settings_content1: this.text_settings_content1,
-      text_yes: this.text_yes,
-      text_no: this.text_no,
-      text_settings_showedit: this.text_settings_showedit,
-      text_settings_showmove: this.text_settings_showmove,
-      text_settings_showadd: this.text_settings_showadd,
-      text_language: this.text_language,
-      text_close_button: this.text_close_button,
-      text_importexport_title: this.text_importexport_title,
-      text_importexport_content: this.text_importexport_content,
-      text_import: this.text_import,
-      text_export: this.text_export,
-      text_error_loadfile: this.text_error_loadfile,
-      text_error_loadingfile: this.text_error_loadingfile,
-      text_example_title: this.text_example_title,
-      text_example_url: this.text_example_url,
-      text_open: this.text_open,
-      text_add: this.text_add,
-      text_edit: this.text_edit,
-      text_move_backward: this.text_move_backward,
-      text_move_forward: this.text_move_forward,
-      text_move_upward: this.text_move_upward,
-      text_move_downward: this.text_move_downward,
-      text_help_title: this.text_help_title,
-      text_about_title: this.text_about_title,
-      text_help_content: this.text_help_content,
-      text_about_content1: this.text_about_content1,
-      text_about_content2: this.text_about_content2,
-      text_about_content3: this.text_about_content3
-    });
+    this.saveState();
   }
 
   handleSettingsChange(e) {
@@ -742,124 +513,14 @@ class BookmarksList extends React.Component {
       default:
         break;
     }
-    this.setState({
-      bookmarks: this.bookmarks,
-      cursor: this.cursor,
-      tmptype: this.tmptype,
-      tmptitle: this.tmptitle,
-      tmpurl: this.tmpurl,
-      showedit: this.showedit,
-      showmove: this.showmove,
-      showadd: this.showadd,
-      language: this.language,
-      text_appname: this.text_appname,
-      text_add_label: this.text_add_label,
-      text_settings_label: this.text_settings_label,
-      text_importexport_label: this.text_importexport_label,
-      text_help_label: this.text_help_label,
-      text_about_label: this.text_about_label,
-      text_edit_title: this.text_edit_title,
-      text_edit_type: this.text_edit_type,
-      text_edit_bookmark: this.text_edit_bookmark,
-      text_edit_folder: this.text_edit_folder,
-      text_edit_bookmark_title: this.text_edit_bookmark_title,
-      text_edit_url: this.text_edit_url,
-      text_delete: this.text_delete,
-      text_back: this.text_back,
-      text_save: this.text_save,
-      text_settings_title: this.text_settings_title,
-      text_settings_content1: this.text_settings_content1,
-      text_yes: this.text_yes,
-      text_no: this.text_no,
-      text_settings_showedit: this.text_settings_showedit,
-      text_settings_showmove: this.text_settings_showmove,
-      text_settings_showadd: this.text_settings_showadd,
-      text_language: this.text_language,
-      text_close_button: this.text_close_button,
-      text_importexport_title: this.text_importexport_title,
-      text_importexport_content: this.text_importexport_content,
-      text_import: this.text_import,
-      text_export: this.text_export,
-      text_error_loadfile: this.text_error_loadfile,
-      text_error_loadingfile: this.text_error_loadingfile,
-      text_example_title: this.text_example_title,
-      text_example_url: this.text_example_url,
-      text_open: this.text_open,
-      text_add: this.text_add,
-      text_edit: this.text_edit,
-      text_move_backward: this.text_move_backward,
-      text_move_forward: this.text_move_forward,
-      text_move_upward: this.text_move_upward,
-      text_move_downward: this.text_move_downward,
-      text_help_title: this.text_help_title,
-      text_about_title: this.text_about_title,
-      text_help_content: this.text_help_content,
-      text_about_content1: this.text_about_content1,
-      text_about_content2: this.text_about_content2,
-      text_about_content3: this.text_about_content3
-    });
+    this.saveState();
   }
 
   loadBookmarks() {
     let bookmarks = localStorage.getItem('bookmarks');
     if (bookmarks) {
       this.bookmarks = JSON.parse(bookmarks);
-      this.setState({
-        bookmarks: this.bookmarks,
-        cursor: this.cursor,
-        tmptype: this.tmptype,
-        tmptitle: this.tmptitle,
-        tmpurl: this.tmpurl,
-        showedit: this.showedit,
-        showmove: this.showmove,
-        showadd: this.showadd,
-        language: this.language,
-        text_appname: this.text_appname,
-        text_add_label: this.text_add_label,
-        text_settings_label: this.text_settings_label,
-        text_importexport_label: this.text_importexport_label,
-        text_help_label: this.text_help_label,
-        text_about_label: this.text_about_label,
-        text_edit_title: this.text_edit_title,
-        text_edit_type: this.text_edit_type,
-        text_edit_bookmark: this.text_edit_bookmark,
-        text_edit_folder: this.text_edit_folder,
-        text_edit_bookmark_title: this.text_edit_bookmark_title,
-        text_edit_url: this.text_edit_url,
-        text_delete: this.text_delete,
-        text_back: this.text_back,
-        text_save: this.text_save,
-        text_settings_title: this.text_settings_title,
-        text_settings_content1: this.text_settings_content1,
-        text_yes: this.text_yes,
-        text_no: this.text_no,
-        text_settings_showedit: this.text_settings_showedit,
-        text_settings_showmove: this.text_settings_showmove,
-        text_settings_showadd: this.text_settings_showadd,
-        text_language: this.text_language,
-        text_close_button: this.text_close_button,
-        text_importexport_title: this.text_importexport_title,
-        text_importexport_content: this.text_importexport_content,
-        text_import: this.text_import,
-        text_export: this.text_export,
-        text_error_loadfile: this.text_error_loadfile,
-        text_error_loadingfile: this.text_error_loadingfile,
-        text_example_title: this.text_example_title,
-        text_example_url: this.text_example_url,
-        text_open: this.text_open,
-        text_add: this.text_add,
-        text_edit: this.text_edit,
-        text_move_backward: this.text_move_backward,
-        text_move_forward: this.text_move_forward,
-        text_move_upward: this.text_move_upward,
-        text_move_downward: this.text_move_downward,
-        text_help_title: this.text_help_title,
-        text_about_title: this.text_about_title,
-        text_help_content: this.text_help_content,
-        text_about_content1: this.text_about_content1,
-        text_about_content2: this.text_about_content2,
-        text_about_content3: this.text_about_content3
-      });
+      this.saveState();
     }
   }
 
@@ -893,8 +554,8 @@ class BookmarksList extends React.Component {
     }
     newBookmark = {
       type: 'bookmark',
-      title: this.text_example_title + newCursor,
-      url: this.text_example_url,
+      title: this.text['text_example_title'] + newCursor,
+      url: this.text['text_example_url'],
       visible: 1
     };
     tmpbookmarks.push(newBookmark);
@@ -915,62 +576,7 @@ class BookmarksList extends React.Component {
     this.tmptype = bookmark.type;
     this.tmptitle = bookmark.title;
     this.tmpurl = bookmark.url;
-    this.setState({
-      bookmarks: this.bookmarks,
-      cursor: this.cursor,
-      tmptype: this.tmptype,
-      tmptitle: this.tmptitle,
-      tmpurl: this.tmpurl,
-      showedit: this.showedit,
-      showmove: this.showmove,
-      showadd: this.showadd,
-      language: this.language,
-      text_appname: this.text_appname,
-      text_add_label: this.text_add_label,
-      text_settings_label: this.text_settings_label,
-      text_importexport_label: this.text_importexport_label,
-      text_help_label: this.text_help_label,
-      text_about_label: this.text_about_label,
-      text_edit_title: this.text_edit_title,
-      text_edit_type: this.text_edit_type,
-      text_edit_bookmark: this.text_edit_bookmark,
-      text_edit_folder: this.text_edit_folder,
-      text_edit_bookmark_title: this.text_edit_bookmark_title,
-      text_edit_url: this.text_edit_url,
-      text_delete: this.text_delete,
-      text_back: this.text_back,
-      text_save: this.text_save,
-      text_settings_title: this.text_settings_title,
-      text_settings_content1: this.text_settings_content1,
-      text_yes: this.text_yes,
-      text_no: this.text_no,
-      text_settings_showedit: this.text_settings_showedit,
-      text_settings_showmove: this.text_settings_showmove,
-      text_settings_showadd: this.text_settings_showadd,
-      text_language: this.text_language,
-      text_close_button: this.text_close_button,
-      text_importexport_title: this.text_importexport_title,
-      text_importexport_content: this.text_importexport_content,
-      text_import: this.text_import,
-      text_export: this.text_export,
-      text_error_loadfile: this.text_error_loadfile,
-      text_error_loadingfile: this.text_error_loadingfile,
-      text_example_title: this.text_example_title,
-      text_example_url: this.text_example_url,
-      text_open: this.text_open,
-      text_add: this.text_add,
-      text_edit: this.text_edit,
-      text_move_backward: this.text_move_backward,
-      text_move_forward: this.text_move_forward,
-      text_move_upward: this.text_move_upward,
-      text_move_downward: this.text_move_downward,
-      text_help_title: this.text_help_title,
-      text_about_title: this.text_about_title,
-      text_help_content: this.text_help_content,
-      text_about_content1: this.text_about_content1,
-      text_about_content2: this.text_about_content2,
-      text_about_content3: this.text_about_content3
-    });
+    this.saveState();
     const dialog = new MDCDialog(this.bookmarksListRef.current.querySelector('#editbookmark'));
     dialog.open();
   }
@@ -1200,7 +806,7 @@ class BookmarksList extends React.Component {
 
   importBookmarksReaderOnload(e) {
     let newBookmarks = [];
-    let text_error_loadingfile = this.text_error_loadingfile;
+    let text_error_loadingfile = this.text['text_error_loadingfile'];
     parse(e.target.result,
       function (err, res) {
         if (err) {
@@ -1238,7 +844,7 @@ class BookmarksList extends React.Component {
     let file = e.target.files[0];
     if (!file) {
       if (e.target.files.length > 0) {
-        alert(this.text_error_loadfile);
+        alert(this.text['text_error_loadfile']);
       }
       return;
     }
@@ -1330,7 +936,7 @@ class BookmarksList extends React.Component {
       }
     }
     return (
-      <div ref={this.bookmarksListRef}>
+      <div ref={this.bookmarksListRef} lang={this.state.language}>
         <TopAppBar>
           <TopAppBarRow>
             <TopAppBarSection align='start'>
@@ -1494,7 +1100,7 @@ class BookmarksList extends React.Component {
                   </label><br />
                   <label for="lang">{this.state.text_language}</label>
 
-                  <select id="lang" name="lang" value={this.state.language} onChange={this.handleSettingsChange}>
+                  <select id="lang" name="lang" lang="en" value={this.state.language} onChange={this.handleSettingsChange}>
                   <option value="af">Afrikaans</option>
                   <option value="sq">Albanian</option>
                   <option value="am">Amharic</option>
