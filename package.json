@@ -9,6 +9,7 @@
 			},
 			"license": "MIT",
 			"dependencies": {
+						"@marcoparrone/i18n": "^1.0.2",
 						"@material/card": "^8.0.0",
 						"@material/dialog": "^8.0.0",
 						"@material/react-material-icon": "^0.15.0",
@@ -22,7 +23,6 @@
 						"@types/react-dom": "^17.0.0",
 						"bookmarks-parser": "^1.5.0",
 						"file-saver": "^2.0.5",
-						"html-react-parser": "^1.2.1",
 						"patch-package": "^6.2.2",
 						"react": "^17.0.1",
 						"react-dom": "^17.0.1",
