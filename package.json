@@ -10,6 +10,7 @@
 			"license": "MIT",
 			"dependencies": {
 						"@marcoparrone/i18n": "^1.0.2",
+						"@marcoparrone/react-language-selector": "^1.0.3",
 						"@material/card": "^8.0.0",
 						"@material/dialog": "^8.0.0",
 						"@material/react-material-icon": "^0.15.0",
