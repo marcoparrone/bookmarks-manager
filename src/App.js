@@ -332,7 +332,7 @@ class BookmarksList extends React.Component {
         showedit: this.showedit,
         showmove: this.showmove,
         showadd: this.showadd,
-        language: this.i18n.language,
+        language: 'en',
         text_appname: defaultText['text_appname'],
         text_add_label: defaultText['text_add_label'],
         text_settings_label: defaultText['text_settings_label'],
@@ -560,7 +560,7 @@ class BookmarksList extends React.Component {
     }
     newBookmark = {
       type: 'bookmark',
-      title: this.i18n.text['text_example_title'] + newCursor,
+      title: this.state.text_example_title + newCursor,
       url: "https://",
       visible: 1
     };
@@ -812,7 +812,7 @@ class BookmarksList extends React.Component {
 
   importBookmarksReaderOnload(e) {
     let newBookmarks = [];
-    let text_error_loadingfile = this.i18n.text['text_error_loadingfile'];
+    let text_error_loadingfile = this.state.text_error_loadingfile;
     parse(e.target.result,
       function (err, res) {
         if (err) {
@@ -850,7 +850,7 @@ class BookmarksList extends React.Component {
     let file = e.target.files[0];
     if (!file) {
       if (e.target.files.length > 0) {
-        alert(this.i18n.text['text_error_loadfile']);
+        alert(this.state.text_error_loadfile);
       }
       return;
     }
