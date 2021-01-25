@@ -209,7 +209,6 @@ class BookmarksList extends React.Component {
       text_error_loadfile: defaultText['text_error_loadfile'],
       text_error_loadingfile: defaultText['text_error_loadingfile'],
       text_example_title: defaultText['text_example_title'],
-      text_example_url: defaultText['text_example_url'],
       text_open: defaultText['text_open'],
       text_add: defaultText['text_add'],
       text_edit: defaultText['text_edit'],
@@ -299,7 +298,6 @@ class BookmarksList extends React.Component {
         text_error_loadfile: this.i18n.text['text_error_loadfile'],
         text_error_loadingfile: this.i18n.text['text_error_loadingfile'],
         text_example_title: this.i18n.text['text_example_title'],
-        text_example_url: defaultText['text_example_url'], // URLs translation is problematic
         text_open: this.i18n.text['text_open'],
         text_add: this.i18n.text['text_add'],
         text_edit: this.i18n.text['text_edit'],
@@ -366,7 +364,6 @@ class BookmarksList extends React.Component {
         text_error_loadfile: defaultText['text_error_loadfile'],
         text_error_loadingfile: defaultText['text_error_loadingfile'],
         text_example_title: defaultText['text_example_title'],
-        text_example_url: defaultText['text_example_url'],
         text_open: defaultText['text_open'],
         text_add: defaultText['text_add'],
         text_edit: defaultText['text_edit'],
@@ -564,7 +561,7 @@ class BookmarksList extends React.Component {
     newBookmark = {
       type: 'bookmark',
       title: this.i18n.text['text_example_title'] + newCursor,
-      url: this.i18n.text['text_example_url'],
+      url: "https://",
       visible: 1
     };
     tmpbookmarks.push(newBookmark);
