@@ -55,6 +55,7 @@
 						]
 			},
 			"devDependencies": {
+						"@marcoparrone/translate-json": "^1.0.4",
 						"@types/file-saver": "^2.0.1",
 						"clean-webpack-plugin": "^3.0.0",
 						"html-webpack-plugin": "^4.5.0",
