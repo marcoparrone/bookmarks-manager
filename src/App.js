@@ -10,8 +10,6 @@ import get_timestamp from './timestamp';
 
 import I18n from '@marcoparrone/i18n';
 
-import LanguageSelector from '@marcoparrone/react-language-selector';
-
 import {Dialog, open_dialog} from '@marcoparrone/dialog';
 
 import AppWithTopBar from '@marcoparrone/appwithtopbar';
@@ -25,6 +23,7 @@ import {
 } from '@marcoparrone/nodes';
 
 import EditDialog from './edit-dialog';
+import SettingsDialog from './settings-dialog';
 
 const defaultText = require ('./en.json');
 
@@ -106,19 +105,16 @@ class BookmarksList extends React.Component {
     this.showedit = 'no';
     this.showmove = 'no';
     this.showadd = 'yes';
-    this.i18n = {};
+    this.i18n = { language: 'en', text: defaultText};
 
-    this.state = {
-      bookmarks: this.bookmarks,
-      showedit: this.showedit,
-      showmove: this.showmove,
-      showadd: this.showadd,
-      language: this.i18n.language,
-      text: defaultText
-    };
+    this.state = { bookmarks: this.bookmarks };
+
     this.deleteBookmark = this.deleteBookmark.bind(this);
+
     this.addBookmark = this.addBookmark.bind(this);
     this.editBookmark = this.editBookmark.bind(this);
+    this.openSettings = this.openSettings.bind(this);
+
     this.movebackwardBookmark = this.movebackwardBookmark.bind(this);
     this.moveforwardBookmark = this.moveforwardBookmark.bind(this);
     this.moveupwardBookmark = this.moveupwardBookmark.bind(this);
@@ -126,35 +122,14 @@ class BookmarksList extends React.Component {
 
     this.handleSettingsChange = this.handleSettingsChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
     this.importBookmarksReaderOnload = this.importBookmarksReaderOnload.bind(this);
     this.importBookmarks = this.importBookmarks.bind(this);
     this.exportBookmarks = this.exportBookmarks.bind(this);
-    this.saveState = this.saveState.bind(this);
 
     this.bookmarksListRef = React.createRef();
     this.EditDialogRef = React.createRef();
-  }
-
-  saveState() {
-    if (this.i18n.text) {
-      this.setState({
-        bookmarks: this.bookmarks,
-        showedit: this.showedit,
-        showmove: this.showmove,
-        showadd: this.showadd,
-        language: this.i18n.language,
-        text: this.i18n.text
-      });
-    } else {
-      this.setState({
-        bookmarks: this.bookmarks,
-        showedit: this.showedit,
-        showmove: this.showmove,
-        showadd: this.showadd,
-        language: 'en',
-        text: defaultText
-      });
-    }
+    this.SettingsDialogRef = React.createRef();
   }
 
   componentDidMount() {
@@ -173,7 +148,7 @@ class BookmarksList extends React.Component {
     }
 
     // Localize the User Interface.
-    this.i18n = new I18n(this.saveState);
+    this.i18n = new I18n(() => {this.forceUpdate()});
 
     // Load the bookmarks from localStorage.
     this.loadBookmarks();
@@ -195,40 +170,37 @@ class BookmarksList extends React.Component {
     this.saveBookmarks();
   }
 
-  handleSettingsChange(e) {
-    switch (e.target.name) {
-      case 'showedit':
-        if (e.target.checked === true) {
-          this.showedit = e.target.value;
-          localStorage.setItem('bookmarks_showedit', this.showedit);
-        }
-        break;
-      case 'showmove':
-        if (e.target.checked === true) {
-          this.showmove = e.target.value;
-          localStorage.setItem('bookmarks_showmove', this.showmove);
-        }
-        break;
-      case 'showadd':
-        if (e.target.checked === true) {
-          this.showadd = e.target.value;
-          localStorage.setItem('bookmarks_showadd', this.showadd);
-        }
-        break;
-      case 'lang':
-        this.i18n.change_language_translate_and_save_to_localStorage(e.target.value);
-        break;
-      default:
-        break;
+  handleSettingsChange(showedit, showmove, showadd, language) {
+    let toupdate = false;
+    if (this.showedit !== showedit) {
+      this.showedit=showedit;
+      localStorage.setItem('bookmarks_showedit', showedit);
+      toupdate = true;
     }
-    this.saveState();
+    if (this.showmove !== showmove) {
+      this.showmove=showmove;
+      localStorage.setItem('bookmarks_showmove', showmove);
+      toupdate = true;
+    }
+    if (this.showadd !== showadd) {
+      this.showadd=showadd;
+      localStorage.setItem('bookmarks_showadd', showadd);
+      toupdate = true;
+    }
+    if (this.i18n.language !== language) {
+      this.i18n.change_language_translate_and_save_to_localStorage(language);
+      toupdate = true;
+    }
+    if (toupdate) {
+      this.forceUpdate();
+    }
   }
 
   loadBookmarks() {
     let bookmarks = load_nodes('bookmarks');
     if (bookmarks) {
       this.bookmarks = bookmarks;
-      this.saveState();
+      this.setState({ bookmarks: this.bookmarks });
     }
   }
 
@@ -240,7 +212,7 @@ class BookmarksList extends React.Component {
       visible: 1
     };
     let newCursor = add_node(this.bookmarks, cursor, newbookmark);
-    change_node_field(this.bookmarks, newCursor, 'title', this.state.text['text_example_title'] + ' ' + newCursor);
+    change_node_field(this.bookmarks, newCursor, 'title', this.i18n.text['text_example_title'] + ' ' + newCursor);
     this.saveBookmarks();
     this.editBookmark(newCursor);
   }
@@ -249,9 +221,13 @@ class BookmarksList extends React.Component {
     let bookmark = get_node(this.bookmarks, cursor);
     if (bookmark) {
       this.EditDialogRef.current.updateState(cursor, bookmark.type, bookmark.title, bookmark.url);
-      this.saveState();
       open_dialog(this.bookmarksListRef, 'editbookmark');
     }
+  }
+
+  openSettings() {
+    this.SettingsDialogRef.current.updateState(this.showedit, this.showmove, this.showadd, this.i18n.language);
+    open_dialog(this.bookmarksListRef, 'settings');
   }
 
   movebackwardBookmark(cursor) {
@@ -289,7 +265,7 @@ class BookmarksList extends React.Component {
 
   importBookmarksReaderOnload(e) {
     let newBookmarks = [];
-    let text_error_loadingfile = this.state.text['text_error_loadingfile'];
+    let text_error_loadingfile = this.i18n.text['text_error_loadingfile'];
     parse(e.target.result,
       function (err, res) {
         if (err) {
@@ -327,7 +303,7 @@ class BookmarksList extends React.Component {
     let file = e.target.files[0];
     if (!file) {
       if (e.target.files.length > 0) {
-        alert(this.state.text['text_error_loadfile']);
+        alert(this.i18n.text['text_error_loadfile']);
       }
       return;
     }
@@ -408,70 +384,51 @@ class BookmarksList extends React.Component {
             moveforwardBookmark={this.moveforwardBookmark}
             moveupwardBookmark={this.moveupwardBookmark}
             movedownwardBookmark={this.movedownwardBookmark}
-            text={this.state.text}
+            text={this.i18n.text}
           />);
       }
     }
     return (
-      <AppWithTopBar refprop={this.bookmarksListRef} lang={this.state.language} appname={this.state.text['text_appname']}
-      icons={[{label: this.state.text['text_add_label'], icon: 'add', callback: () => this.addBookmark()},
-              {label: this.state.text['text_settings_label'], icon: 'settings', callback: () => open_dialog(this.bookmarksListRef, 'settings')},
-              {label: this.state.text['text_importexport_label'], icon: 'import_export', callback: () => open_dialog(this.bookmarksListRef, 'impexp')},
-              {label: this.state.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
-              {label: this.state.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
+      <AppWithTopBar refprop={this.bookmarksListRef} lang={this.i18n.language} appname={this.i18n.text['text_appname']}
+      icons={[{label: this.i18n.text['text_add_label'], icon: 'add', callback: () => this.addBookmark()},
+              {label: this.i18n.text['text_settings_label'], icon: 'settings', callback: () => this.openSettings()},
+              {label: this.i18n.text['text_importexport_label'], icon: 'import_export', callback: () => open_dialog(this.bookmarksListRef, 'impexp')},
+              {label: this.i18n.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
+              {label: this.i18n.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
         <section className="bookmarksSection">
           {bookmarksRepresentation}
         </section>
-          <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.state.text}
+          <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.i18n.text}
            deleteBookmark={this.deleteBookmark} handleSubmit={this.handleSubmit} />
-          <Dialog id="settings" title={this.state.text['text_settings_title']} text_close_button={this.state.text['text_close_button']} >
-            <p>{this.state.text['text_settings_content1']}</p>
-            <label>{this.state.text['text_settings_showedit']}
-              <input type="radio" id="showedityes" name="showedit" value="yes" checked={this.state.showedit === 'yes'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_yes']}
-              <input type="radio" id="showeditno" name="showedit" value="no" checked={this.state.showedit === 'no'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_no']}
-            </label><br />
-            <label>{this.state.text['text_settings_showmove']}
-              <input type="radio" id="showmoveyes" name="showmove" value="yes" checked={this.state.showmove === 'yes'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_yes']}
-              <input type="radio" id="showmoveno" name="showmove" value="no" checked={this.state.showmove === 'no'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_no']}
-            </label><br />
-            <label>{this.state.text['text_settings_showadd']}
-              <input type="radio" id="showaddyes" name="showadd" value="yes" checked={this.state.showadd === 'yes'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_yes']}
-              <input type="radio" id="showaddno" name="showadd" value="no" checked={this.state.showadd === 'no'} onChange={this.handleSettingsChange}>
-              </input>{this.state.text['text_no']}
-            </label><br />
-            <LanguageSelector text_language={this.state.text['text_language']} language={this.state.language} handleSettingsChange={this.handleSettingsChange} />
-          </Dialog>
-          <Dialog id="impexp" title={this.state.text['text_importexport_title']}
+          <SettingsDialog id="SettingsDialog" ref={this.SettingsDialogRef} text={this.i18n.text}
+           showedit={this.showedit} showmove={this.showmove} showadd={this.showadd} language={this.i18n.language} 
+           handleSettingsChange={this.handleSettingsChange} />
+          <Dialog id="impexp" title={this.i18n.text['text_importexport_title']}
                   actions={(<span>
-                    <label>{this.state.text['text_import']}
+                    <label>{this.i18n.text['text_import']}
                     &nbsp;
                     <input type="file" onChange={e => this.importBookmarks(e)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></label>
-                    <input type="submit" value={this.state.text['text_back']} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                    <input type="submit" value={this.state.text['text_export']} onClick={event => this.exportBookmarks()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)} >
-            <p>{this.state.text['text_importexport_content']}</p>
+                    <input type="submit" value={this.i18n.text['text_back'] || "Back"} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+                    <input type="submit" value={this.i18n.text['text_export'] || "Export"} onClick={event => this.exportBookmarks()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)} >
+            <p>{this.i18n.text['text_importexport_content']}</p>
           </Dialog>
-          <Dialog id="help" title={this.state.text['text_help_title']} text_close_button={this.state.text['text_close_button']} >
-            <p>{this.state.text['text_help_content1']}</p>
-            <p>{this.state.text['text_help_content2']}</p>
-            <p>{this.state.text['text_help_content3']}</p>
-            <p>{this.state.text['text_help_content4']}</p>
-            <p>{this.state.text['text_help_content5']}</p>
-            <p>{this.state.text['text_help_content6']}</p>
-            <p>{this.state.text['text_help_content7']}</p>
-            <p>{this.state.text['text_help_content8']}</p>
+          <Dialog id="help" title={this.i18n.text['text_help_title']} text_close_button={this.i18n.text['text_close_button']} >
+            <p>{this.i18n.text['text_help_content1']}</p>
+            <p>{this.i18n.text['text_help_content2']}</p>
+            <p>{this.i18n.text['text_help_content3']}</p>
+            <p>{this.i18n.text['text_help_content4']}</p>
+            <p>{this.i18n.text['text_help_content5']}</p>
+            <p>{this.i18n.text['text_help_content6']}</p>
+            <p>{this.i18n.text['text_help_content7']}</p>
+            <p>{this.i18n.text['text_help_content8']}</p>
           </Dialog>
-          <Dialog id="about" title={this.state.text['text_about_title']} text_close_button={this.state.text['text_close_button']} >
-            <p>{this.state.text['text_about_content1']}
-                <br />{this.state.text['text_about_content2']}</p>
-            <p>{this.state.text['text_about_content3']}</p>
-            <p>{this.state.text['text_about_content4']}</p>
-            <p>{this.state.text['text_about_content5']}</p>
-            <p>{this.state.text['text_about_content6']}</p>
+          <Dialog id="about" title={this.i18n.text['text_about_title']} text_close_button={this.i18n.text['text_close_button']} >
+            <p>{this.i18n.text['text_about_content1']}
+                <br />{this.i18n.text['text_about_content2']}</p>
+            <p>{this.i18n.text['text_about_content3']}</p>
+            <p>{this.i18n.text['text_about_content4']}</p>
+            <p>{this.i18n.text['text_about_content5']}</p>
+            <p>{this.i18n.text['text_about_content6']}</p>
           </Dialog>
         </AppWithTopBar>
     );
