@@ -24,6 +24,8 @@ import {
   load_nodes, save_nodes
 } from '@marcoparrone/nodes';
 
+import EditDialog from './edit-dialog';
+
 const defaultText = require ('./en.json');
 
 class Bookmark extends React.Component {
@@ -101,10 +103,6 @@ class BookmarksList extends React.Component {
   constructor(props) {
     super(props);
     this.bookmarks = [];
-    this.cursor = "";
-    this.tmptype = 'bookmark';
-    this.tmptitle = '';
-    this.tmpurl = '';
     this.showedit = 'no';
     this.showmove = 'no';
     this.showadd = 'yes';
@@ -112,10 +110,6 @@ class BookmarksList extends React.Component {
 
     this.state = {
       bookmarks: this.bookmarks,
-      cursor: this.cursor,
-      tmptype: this.tmptype,
-      tmptitle: this.tmptitle,
-      tmpurl: this.tmpurl,
       showedit: this.showedit,
       showmove: this.showmove,
       showadd: this.showadd,
@@ -129,24 +123,22 @@ class BookmarksList extends React.Component {
     this.moveforwardBookmark = this.moveforwardBookmark.bind(this);
     this.moveupwardBookmark = this.moveupwardBookmark.bind(this);
     this.movedownwardBookmark = this.movedownwardBookmark.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
+
     this.handleSettingsChange = this.handleSettingsChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.importBookmarksReaderOnload = this.importBookmarksReaderOnload.bind(this);
     this.importBookmarks = this.importBookmarks.bind(this);
     this.exportBookmarks = this.exportBookmarks.bind(this);
     this.saveState = this.saveState.bind(this);
+
     this.bookmarksListRef = React.createRef();
+    this.EditDialogRef = React.createRef();
   }
 
   saveState() {
     if (this.i18n.text) {
       this.setState({
         bookmarks: this.bookmarks,
-        cursor: this.cursor,
-        tmptype: this.tmptype,
-        tmptitle: this.tmptitle,
-        tmpurl: this.tmpurl,
         showedit: this.showedit,
         showmove: this.showmove,
         showadd: this.showadd,
@@ -156,10 +148,6 @@ class BookmarksList extends React.Component {
     } else {
       this.setState({
         bookmarks: this.bookmarks,
-        cursor: this.cursor,
-        tmptype: this.tmptype,
-        tmptitle: this.tmptitle,
-        tmpurl: this.tmpurl,
         showedit: this.showedit,
         showmove: this.showmove,
         showadd: this.showadd,
@@ -200,30 +188,11 @@ class BookmarksList extends React.Component {
     this.setState({bookmarks: this.bookmarks});
   }
 
-  handleSubmit(cursor) {
-    change_node_field(this.bookmarks, cursor, 'title', this.state.tmptitle);
-    change_node_field(this.bookmarks, cursor, 'type', this.state.tmptype);
-    change_node_field(this.bookmarks, cursor, 'url', this.state.tmpurl);
+  handleSubmit(cursor, type, title, url) {
+    change_node_field(this.bookmarks, cursor, 'type', type);
+    change_node_field(this.bookmarks, cursor, 'title', title);
+    change_node_field(this.bookmarks, cursor, 'url', url);
     this.saveBookmarks();
-  }
-
-  handleInputChange(e) {
-    switch (e.target.name) {
-      case 'tmptype':
-        if (e.target.checked === true) {
-          this.tmptype = e.target.value;
-        }
-        break;
-      case 'tmptitle':
-        this.tmptitle = e.target.value;
-        break;
-      case 'tmpurl':
-        this.tmpurl = e.target.value;
-        break;
-      default:
-        break;
-    }
-    this.saveState();
   }
 
   handleSettingsChange(e) {
@@ -279,11 +248,7 @@ class BookmarksList extends React.Component {
   editBookmark(cursor) {
     let bookmark = get_node(this.bookmarks, cursor);
     if (bookmark) {
-      this.cursor = cursor;
-      this.tmptype = bookmark.type;
-      this.tmptitle = bookmark.title;
-      this.tmpurl = bookmark.url;
-
+      this.EditDialogRef.current.updateState(cursor, bookmark.type, bookmark.title, bookmark.url);
       this.saveState();
       open_dialog(this.bookmarksListRef, 'editbookmark');
     }
@@ -457,22 +422,8 @@ class BookmarksList extends React.Component {
         <section className="bookmarksSection">
           {bookmarksRepresentation}
         </section>
-        <Dialog id="editbookmark" title={this.state.text['text_edit_title']}
-                  actions={(<span><input type="submit" value={this.state.text['text_delete']} onClick={event => this.deleteBookmark(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                  <input type="submit" value={this.state.text['text_back']} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                  <input type="submit" value={this.state.text['text_save']} onClick={event => this.handleSubmit(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)}>
-                  <label>{this.state.text['text_edit_type']}
-                    <input type="radio" id="abktypebookmark" name="tmptype" value="bookmark" checked={this.state.tmptype === 'bookmark'} onChange={this.handleInputChange}>
-                    </input>{this.state.text['text_edit_bookmark']}
-                    <input type="radio" id="abktypefolder" name="tmptype" value="folder" checked={this.state.tmptype === 'folder'} onChange={this.handleInputChange}>
-                    </input>{this.state.text['text_edit_folder']}
-                  </label><br />
-                  <label>{this.state.text['text_edit_bookmark_title']}
-                    <input type="text" id="abktitle" name="tmptitle" value={this.state.tmptitle} onChange={this.handleInputChange}></input>
-                  </label><br />
-                  {this.state.tmptype === 'bookmark' &&
-                    <label>{this.state.text['text_edit_url']} <input type="text" id="abkurl" name="tmpurl" value={this.state.tmpurl} onChange={this.handleInputChange}></input></label>}
-          </Dialog>
+          <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.state.text}
+           deleteBookmark={this.deleteBookmark} handleSubmit={this.handleSubmit} />
           <Dialog id="settings" title={this.state.text['text_settings_title']} text_close_button={this.state.text['text_close_button']} >
             <p>{this.state.text['text_settings_content1']}</p>
             <label>{this.state.text['text_settings_showedit']}
