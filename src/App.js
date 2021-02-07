@@ -14,16 +14,12 @@ import {Dialog, open_dialog} from '@marcoparrone/dialog';
 
 import AppWithTopBar from '@marcoparrone/appwithtopbar';
 
-import {
-  add_node, get_node, change_node_field, delete_node,
-  move_node_backward, move_node_forward, move_node_upward, move_node_downward,
-  load_nodes, save_nodes
-} from '@marcoparrone/nodes';
+import { add_node, get_node, change_node_field, delete_node, load_nodes} from '@marcoparrone/nodes';
 
 import EditDialog from './edit-dialog';
 import SettingsDialog from './settings-dialog';
 
-import Node from './react-node';
+import NodesArray from './react-node';
 
 const defaultText = require ('./en.json');
 
@@ -37,28 +33,26 @@ class NodesList extends React.Component {
     this.showadd = 'yes';
     this.i18n = { language: 'en', text: defaultText};
 
-    this.state = { bookmarks: this.bookmarks };
-
     this.deleteNode = this.deleteNode.bind(this);
 
+    this.saveNodes = this.saveNodes.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSettingsChange = this.handleSettingsChange.bind(this);
+    this.loadNodes = this.loadNodes.bind(this);
     this.addNode = this.addNode.bind(this);
     this.openNode = this.openNode.bind(this);
     this.editNode = this.editNode.bind(this);
     this.openSettings = this.openSettings.bind(this);
-
-    this.movebackwardNode = this.movebackwardNode.bind(this);
-    this.moveforwardNode = this.moveforwardNode.bind(this);
-    this.moveupwardNode = this.moveupwardNode.bind(this);
-    this.movedownwardNode = this.movedownwardNode.bind(this);
-
-    this.handleSettingsChange = this.handleSettingsChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.deleteNode = this.deleteNode.bind(this);
+    this.importNodes = this.importNodes.bind(this);
+    this.exportNodes = this.exportNodes.bind(this);
 
     this.importNodesReaderOnload = this.importNodesReaderOnload.bind(this);
     this.importNodes = this.importNodes.bind(this);
     this.exportNodes = this.exportNodes.bind(this);
 
     this.bookmarksListRef = React.createRef();
+    this.NodesArrayRef = React.createRef();
     this.EditDialogRef = React.createRef();
     this.SettingsDialogRef = React.createRef();
   }
@@ -85,13 +79,8 @@ class NodesList extends React.Component {
     this.loadNodes();
   }
 
-  componentWillUnmount() {
-
-  }
-
   saveNodes() {
-    save_nodes(this.bookmarks, 'bookmarks');
-    this.setState({bookmarks: this.bookmarks});
+    this.NodesArrayRef.current.saveNodes(this.bookmarks);
   }
 
   handleSubmit(cursor, type, title, url) {
@@ -132,7 +121,7 @@ class NodesList extends React.Component {
     let bookmarks = load_nodes('bookmarks');
     if (bookmarks) {
       this.bookmarks = bookmarks;
-      this.setState({ bookmarks: this.bookmarks });
+      this.NodesArrayRef.current.updateState(this.bookmarks);
     }
   }
 
@@ -167,32 +156,6 @@ class NodesList extends React.Component {
   openSettings() {
     this.SettingsDialogRef.current.updateState(this.showedit, this.showmove, this.showadd, this.i18n.language);
     open_dialog(this.bookmarksListRef, 'settings');
-  }
-
-  movebackwardNode(cursor) {
-    if (move_node_backward(this.bookmarks, cursor)) {
-      this.saveNodes();
-    }
-  }
-
-  moveforwardNode(cursor) {
-    if (move_node_forward(this.bookmarks, cursor)) {
-      this.saveNodes();
-    }
-  }
-
-  moveupwardNode(cursor) {
-    const emptynode = {type: 'bookmark', title: "InvisibleElement", content: "InvisibleContent", visible: 0};
-    if (move_node_upward(this.bookmarks, cursor, emptynode)) {
-      this.saveNodes();
-    }
-  }
-
-  movedownwardNode(cursor) {
-    const emptynode = {type: 'bookmark', title: "InvisibleElement", content: "InvisibleContent", visible: 0};
-    if (move_node_downward(this.bookmarks, cursor, emptynode)) {
-      this.saveNodes();
-    }
   }
 
   deleteNode(cursor) {
@@ -302,32 +265,6 @@ class NodesList extends React.Component {
   }
 
   render() {
-    let bookmarksRepresentation = [];
-    for (let i = 0; i < this.state.bookmarks.length; i++) {
-      if (this.bookmarks[i].visible !== 0) {
-        bookmarksRepresentation.push(
-          <Node
-            id={i.toString()}
-            key={'Bookmark' + i + ' ' + this.state.bookmarks[i].visible}
-            type={this.state.bookmarks[i].type}
-            title={this.state.bookmarks[i].title}
-            url={this.state.bookmarks[i].url}
-            children={this.state.bookmarks[i].children}
-            visible={this.state.bookmarks[i].visible}
-            showedit={this.showedit}
-            showmove={this.showmove}
-            showadd={this.showadd}
-            addNode={this.addNode}
-            openNode={this.openNode}
-            editNode={this.editNode}
-            movebackwardNode={this.movebackwardNode}
-            moveforwardNode={this.moveforwardNode}
-            moveupwardNode={this.moveupwardNode}
-            movedownwardNode={this.movedownwardNode}
-            text={this.i18n.text}
-          />);
-      }
-    }
     return (
       <AppWithTopBar refprop={this.bookmarksListRef} lang={this.i18n.language} appname={this.i18n.text['text_appname']}
       icons={[{label: this.i18n.text['text_add_label'], icon: 'add', callback: () => this.addNode()},
@@ -335,9 +272,9 @@ class NodesList extends React.Component {
               {label: this.i18n.text['text_importexport_label'], icon: 'import_export', callback: () => open_dialog(this.bookmarksListRef, 'impexp')},
               {label: this.i18n.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
               {label: this.i18n.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
-        <section className="bookmarksSection">
-          {bookmarksRepresentation}
-        </section>
+          <NodesArray key="NodesArray" ref={this.NodesArrayRef} item="bookmarks" text={this.i18n.text}
+            nodes={this.nodes} showedit={this.showedit} showmove={this.showmove} showadd={this.showadd}
+            addNode={this.addNode} openNode={this.openNode} editNode={this.editNode} />
           <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.i18n.text}
            deleteNode={this.deleteNode} handleSubmit={this.handleSubmit} />
           <SettingsDialog id="SettingsDialog" ref={this.SettingsDialogRef} text={this.i18n.text}

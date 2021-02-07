@@ -6,7 +6,14 @@ import "@material/card/dist/mdc.card.css";
 
 import IconButton from './iconbutton';
 
-export default class Node extends React.Component {
+import {
+  add_node, get_node, change_node_field, delete_node,
+  move_node_backward, move_node_forward, move_node_upward, move_node_downward,
+  load_nodes, save_nodes, export_nodes, import_nodes
+} from '@marcoparrone/nodes';
+
+
+class Node extends React.Component {
   render() {
     let content = [];
     let count = 0;
@@ -68,3 +75,90 @@ export default class Node extends React.Component {
     );
   }
 }
+
+export default class NodesArray extends React.Component {
+  constructor(props) {
+    super(props);
+    this.nodes = this.props.nodes ? this.props.nodes : [];
+    this.item = this.props.item ? this.props.item : 'nodes';
+    this.state = { nodes: this.nodes };
+    this.updateState = this.updateState.bind(this);
+    this.saveNodes = this.saveNodes.bind(this);
+    this.movebackwardNode = this.movebackwardNode.bind(this);
+    this.moveforwardNode = this.moveforwardNode.bind(this);
+    this.moveupwardNode = this.moveupwardNode.bind(this);
+    this.movedownwardNode = this.movedownwardNode.bind(this);
+  }
+
+  updateState(nodes) {
+    this.nodes = nodes
+    this.setState({ nodes: this.nodes });
+  }
+
+  saveNodes() {
+    save_nodes(this.nodes, this.item);
+    this.updateState(this.nodes);
+  }
+
+  movebackwardNode(cursor) {
+    if (move_node_backward(this.nodes, cursor)) {
+      this.saveNodes();
+    }
+  }
+
+  moveforwardNode(cursor) {
+    if (move_node_forward(this.nodes, cursor)) {
+      this.saveNodes();
+    }
+  }
+
+  moveupwardNode(cursor) {
+    const emptynode = {type: 'folder', title: "InvisibleElement", content: "InvisibleContent", visible: 0};
+    if (move_node_upward(this.nodes, cursor, emptynode)) {
+      this.saveNodes();
+    }
+  }
+
+  movedownwardNode(cursor) {
+    const emptynode = {type: 'folder', title: "InvisibleElement", content: "InvisibleContent", visible: 0};
+    if (move_node_downward(this.nodes, cursor, emptynode)) {
+      this.saveNodes();
+    }
+  }
+
+  render () {
+    let nodesRepresentation = [];
+    for (let i = 0; i < this.state.nodes.length; i++) {
+      if (this.nodes[i].visible !== 0) {
+        nodesRepresentation.push(
+          <Node
+            id={i.toString()}
+            key={'Node' + i + ' ' + this.state.nodes[i].visible}
+            type={this.state.nodes[i].type}
+            title={this.state.nodes[i].title}
+            content={this.state.nodes[i].content}
+            children={this.state.nodes[i].children}
+            visible={this.state.nodes[i].visible}
+            showedit={this.props.showedit}
+            showmove={this.props.showmove}
+            showadd={this.props.showadd}
+            addNode={this.props.addNode}
+            openNode={this.props.openNode}
+            editNode={this.props.editNode}
+            movebackwardNode={this.movebackwardNode}
+            moveforwardNode={this.moveforwardNode}
+            moveupwardNode={this.moveupwardNode}
+            movedownwardNode={this.movedownwardNode}
+            text={this.props.text}
+          />);
+      }
+    }
+    return (
+      <section className="nodesSection">
+        {nodesRepresentation}
+      </section>
+      );
+  }
+}
+
+export {Node, NodesArray};
