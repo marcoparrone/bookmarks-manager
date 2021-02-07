@@ -47,7 +47,7 @@ export default class EditDialog extends React.Component {
   render() {
     return (
       <Dialog id="editbookmark" title={this.props.text['text_edit_title']}
-        actions={(<span><input type="submit" value={this.props.text['text_delete'] || "Delete"} onClick={event => this.props.deleteBookmark(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
+        actions={(<span><input type="submit" value={this.props.text['text_delete'] || "Delete"} onClick={event => this.props.deleteNode(this.state.cursor)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
           <input type="submit" value={this.props.text['text_back']  || "Back"} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
           <input type="submit" value={this.props.text['text_save']  || "Save"} onClick={event => this.props.handleSubmit(this.state.cursor, this.state.type, this.state.title, this.state.url)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)}>
         <label>{this.props.text['text_edit_type']}
