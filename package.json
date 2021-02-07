@@ -9,7 +9,10 @@
 			},
 			"license": "MIT",
 			"dependencies": {
+						"@marcoparrone/appwithtopbar": "^1.0.1",
+						"@marcoparrone/dialog": "^1.0.3",
 						"@marcoparrone/i18n": "^1.0.2",
+						"@marcoparrone/nodes": "^1.0.2",
 						"@marcoparrone/react-language-selector": "^1.0.3",
 						"@material/card": "^8.0.0",
 						"@material/dialog": "^8.0.0",
