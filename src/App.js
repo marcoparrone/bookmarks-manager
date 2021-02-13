@@ -80,7 +80,8 @@ class NodesList extends React.Component {
   }
 
   saveNodes() {
-    this.NodesArrayRef.current.saveNodes(this.bookmarks);
+    this.NodesArrayRef.current.updateState(this.bookmarks);
+    this.NodesArrayRef.current.saveNodes();
   }
 
   handleSubmit(cursor, type, title, url) {
@@ -233,7 +234,7 @@ class NodesList extends React.Component {
             netscapeBookmarks.push("<DL><p>");
           }
           if (bookmarks[i].children !== undefined && bookmarks[i].children !== null && bookmarks[i].children !== []) {
-            netscapeBookmarks.push(this.exportBookmarksHelper(bookmarks[i].children));
+            netscapeBookmarks.push(this.exportNodesHelper(bookmarks[i].children));
           }
           if (bookmarks[i].ns_root !== 'menu') {
             netscapeBookmarks.push("</DL><p>");
