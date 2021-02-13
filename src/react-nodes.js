@@ -89,13 +89,13 @@ export default class NodesArray extends React.Component {
   }
 
   updateState(nodes) {
-    this.nodes = nodes
+    this.nodes = nodes;
     this.setState({ nodes: this.nodes });
   }
 
   saveNodes() {
     save_nodes(this.nodes, this.item);
-    this.updateState(this.nodes);
+    this.setState({ nodes: this.nodes });
   }
 
   movebackwardNode(cursor) {
@@ -131,7 +131,7 @@ export default class NodesArray extends React.Component {
         nodesRepresentation.push(
           <Node
             id={i.toString()}
-            key={'Node' + i + ' ' + this.state.nodes[i].visible}
+            key={'Node' + i}
             type={this.state.nodes[i].type}
             title={this.state.nodes[i].title}
             content={this.state.nodes[i].content}
