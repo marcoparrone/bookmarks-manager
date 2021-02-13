@@ -19,11 +19,11 @@ import { add_node, get_node, change_node_field, delete_node, load_nodes} from '@
 import EditDialog from './edit-dialog';
 import SettingsDialog from './settings-dialog';
 
-import NodesArray from './react-nodes';
+import NodesArray from '@marcoparrone/react-nodes';
 
 const defaultText = require ('./en.json');
 
-class NodesList extends React.Component {
+class NodesApp extends React.Component {
 
   constructor(props) {
     super(props);
@@ -274,7 +274,7 @@ class NodesList extends React.Component {
               {label: this.i18n.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
               {label: this.i18n.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
           <NodesArray key="NodesArray" ref={this.NodesArrayRef} item="bookmarks" text={this.i18n.text}
-            nodes={this.nodes} showedit={this.showedit} showmove={this.showmove} showadd={this.showadd}
+            nodes={this.bookmarks} showedit={this.showedit} showmove={this.showmove} showadd={this.showadd}
             addNode={this.addNode} openNode={this.openNode} editNode={this.editNode} />
           <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.i18n.text}
            deleteNode={this.deleteNode} handleSubmit={this.handleSubmit} />
@@ -316,7 +316,7 @@ class NodesList extends React.Component {
 function App() {
   return (
     <div className="App">
-      <NodesList />
+      <NodesApp />
     </div>
   );
 }
