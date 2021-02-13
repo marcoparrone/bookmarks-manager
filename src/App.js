@@ -1,9 +1,6 @@
 import React from 'react';
 import './App.css';
 
-import "@material/card/dist/mdc.card.css";
-import '@material/react-material-icon/dist/material-icon.css';
-
 import parse from 'bookmarks-parser';
 import saveAs from 'file-saver';
 import get_timestamp from './timestamp';
