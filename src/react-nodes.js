@@ -4,7 +4,7 @@ import React from 'react';
 
 import "@material/card/dist/mdc.card.css";
 
-import IconButton from './iconbutton';
+import IconButton from '@marcoparrone/iconbutton';
 
 import {
   move_node_backward, move_node_forward, move_node_upward, move_node_downward,
