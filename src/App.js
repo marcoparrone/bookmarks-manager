@@ -19,7 +19,7 @@ import { add_node, get_node, change_node_field, delete_node, load_nodes} from '@
 import EditDialog from './edit-dialog';
 import SettingsDialog from './settings-dialog';
 
-import NodesArray from './react-node';
+import NodesArray from './react-nodes';
 
 const defaultText = require ('./en.json');
 

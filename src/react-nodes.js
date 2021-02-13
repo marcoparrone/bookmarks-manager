@@ -1,4 +1,4 @@
-// react-nodes.js - React node implementation.
+// react-nodes.js - React nodes implementation.
 
 import React from 'react';
 
@@ -7,11 +7,9 @@ import "@material/card/dist/mdc.card.css";
 import IconButton from './iconbutton';
 
 import {
-  add_node, get_node, change_node_field, delete_node,
   move_node_backward, move_node_forward, move_node_upward, move_node_downward,
-  load_nodes, save_nodes, export_nodes, import_nodes
+  save_nodes
 } from '@marcoparrone/nodes';
-
 
 class Node extends React.Component {
   render() {
