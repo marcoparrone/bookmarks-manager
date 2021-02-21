@@ -15,6 +15,7 @@ import { add_node, get_node, change_node_field, delete_node, load_nodes} from '@
 
 import EditDialog from './edit-dialog';
 import SettingsDialog from './settings-dialog';
+import ImpExpDialog from './impexp-dialog';
 
 import NodesArray from '@marcoparrone/react-nodes';
 
@@ -40,11 +41,8 @@ class NodesApp extends React.Component {
     this.openNode = this.openNode.bind(this);
     this.editNode = this.editNode.bind(this);
     this.openSettings = this.openSettings.bind(this);
+    this.openImpExp = this.openImpExp.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
-    this.importNodes = this.importNodes.bind(this);
-    this.exportNodes = this.exportNodes.bind(this);
-
-    this.importNodesReaderOnload = this.importNodesReaderOnload.bind(this);
     this.importNodes = this.importNodes.bind(this);
     this.exportNodes = this.exportNodes.bind(this);
 
@@ -156,6 +154,10 @@ class NodesApp extends React.Component {
     open_dialog(this.bookmarksListRef, 'settings');
   }
 
+  openImpExp() {
+    open_dialog(this.bookmarksListRef, 'impexp');
+  }
+
   deleteNode(cursor) {
     if (delete_node(this.bookmarks, cursor)) {
       this.saveNodes();
@@ -163,43 +165,7 @@ class NodesApp extends React.Component {
     }
   }
 
-  importNodesReaderOnload(e) {
-    let newBookmarks = [];
-    let text_error_loadingfile = this.i18n.text['text_error_loadingfile'];
-    parse(e.target.result,
-      function (err, res) {
-        if (err) {
-          alert(text_error_loadingfile + err);
-        } else {
-          for (let i = 0; i < res.bookmarks.length; i++) {
-            if (res.bookmarks[i].ns_root === 'menu') {
-              for (let j = 0; j < res.bookmarks[i].children.length; j++) {
-                newBookmarks.push(res.bookmarks[i].children[j]);
-              }
-            } else {
-              newBookmarks.push(res.bookmarks[i]);
-            }
-          }
-        }
-      });
-    if (newBookmarks.length > 0) {
-      // Empty bookmarks array from old entries.
-      let oldCount = this.bookmarks.length;
-      for (let i = 0; i < oldCount; i++) {
-        this.bookmarks.pop();
-      }
-      // Populate bookmarks array with new imported items.
-      for (let i = 0; i < newBookmarks.length; i++) {
-        newBookmarks[i].visible = 1;
-        this.bookmarks.push(newBookmarks[i]);
-      }
-      // Save and display.
-      this.saveNodes();
-      this.forceUpdate();
-    }
-  }
-
-  importNodes(e) {
+  importNodes(e, merge) {
     let file = e.target.files[0];
     if (!file) {
       if (e.target.files.length > 0) {
@@ -208,7 +174,43 @@ class NodesApp extends React.Component {
       return;
     }
     let reader = new FileReader();
-    reader.onload = this.importNodesReaderOnload;
+    reader.onload = (e) => {
+      let newBookmarks = [];
+      let text_error_loadingfile = this.i18n.text['text_error_loadingfile'];
+      parse(e.target.result,
+        function (err, res) {
+          if (err) {
+            alert(text_error_loadingfile + err);
+          } else {
+            for (let i = 0; i < res.bookmarks.length; i++) {
+              if (res.bookmarks[i].ns_root === 'menu') {
+                for (let j = 0; j < res.bookmarks[i].children.length; j++) {
+                  newBookmarks.push(res.bookmarks[i].children[j]);
+                }
+              } else {
+                newBookmarks.push(res.bookmarks[i]);
+              }
+            }
+          }
+        });
+      if (newBookmarks.length > 0) {
+        if (! merge) {
+          // Empty bookmarks array from old entries.
+          let oldCount = this.bookmarks.length;
+          for (let i = 0; i < oldCount; i++) {
+            this.bookmarks.pop();
+          }
+        }
+        // Populate bookmarks array with new imported items.
+        for (let i = 0; i < newBookmarks.length; i++) {
+          newBookmarks[i].visible = 1;
+          this.bookmarks.push(newBookmarks[i]);
+        }
+        // Save and display.
+        this.saveNodes();
+        this.forceUpdate();
+      }
+    }
     reader.readAsText(file);
   }
 
@@ -267,7 +269,7 @@ class NodesApp extends React.Component {
       <AppWithTopBar refprop={this.bookmarksListRef} lang={this.i18n.language} appname={this.i18n.text['text_appname']}
       icons={[{label: this.i18n.text['text_add_label'], icon: 'add', callback: () => this.addNode()},
               {label: this.i18n.text['text_settings_label'], icon: 'settings', callback: () => this.openSettings()},
-              {label: this.i18n.text['text_importexport_label'], icon: 'import_export', callback: () => open_dialog(this.bookmarksListRef, 'impexp')},
+              {label: this.i18n.text['text_importexport_label'], icon: 'import_export', callback: () => this.openImpExp()},
               {label: this.i18n.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
               {label: this.i18n.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
           <NodesArray key="NodesArray" ref={this.NodesArrayRef} item="bookmarks" text={this.i18n.text}
@@ -278,15 +280,7 @@ class NodesApp extends React.Component {
           <SettingsDialog id="SettingsDialog" ref={this.SettingsDialogRef} text={this.i18n.text}
            showedit={this.showedit} showmove={this.showmove} showadd={this.showadd} language={this.i18n.language} 
            handleSettingsChange={this.handleSettingsChange} />
-          <Dialog id="impexp" title={this.i18n.text['text_importexport_title']}
-                  actions={(<span>
-                    <label>{this.i18n.text['text_import']}
-                    &nbsp;
-                    <input type="file" onChange={e => this.importNodes(e)} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></label>
-                    <input type="submit" value={this.i18n.text['text_back'] || "Back"} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" />
-                    <input type="submit" value={this.i18n.text['text_export'] || "Export"} onClick={event => this.exportNodes()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)} >
-            <p>{this.i18n.text['text_importexport_content']}</p>
-          </Dialog>
+          <ImpExpDialog id="ImpExpDialog" text={this.i18n.text} exportNodes={this.exportNodes} importNodes={this.importNodes} />
           <Dialog id="help" title={this.i18n.text['text_help_title']} text_close_button={this.i18n.text['text_close_button']} >
             <p>{this.i18n.text['text_help_content1']}</p>
             <p>{this.i18n.text['text_help_content2']}</p>
