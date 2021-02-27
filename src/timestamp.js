@@ -15,5 +15,5 @@ export default function get_timestamp(){
   let min=dt.getMinutes();
   let sec=dt.getSeconds();
 
- return year + '-' + pad(month) + '-' + pad(day) + 'T' + pad(hours) + '-' + pad(min) + '-' + pad(sec);
+ return year + pad(month) + pad(day) + 'T' + pad(hours) + pad(min) + pad(sec);
 }
