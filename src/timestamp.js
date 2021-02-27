@@ -9,8 +9,8 @@ function pad(n){
 export default function get_timestamp(){
   let dt=new Date();
   let year=dt.getFullYear();
-  let month=dt.getMonth();
-  let day=dt.getDay();
+  let month=dt.getMonth() + 1;
+  let day=dt.getDate();
   let hours=dt.getHours();
   let min=dt.getMinutes();
   let sec=dt.getSeconds();

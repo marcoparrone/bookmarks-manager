@@ -54,7 +54,8 @@ export default class ImpExpDialog extends React.Component {
           <input type="submit" value={this.props.text['text_export'] || "Export"} onClick={event => this.props.exportNodes()} className="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes" /></span>)} >
         <p>{this.props.text['text_importexport_content']}</p>
         <label>{this.props.text['text_question_merge']}
-            <input type="radio" id="mergeyes" name="merge" value="yes" checked={this.state.merge} onChange={this.handleInputChange}>
+          <br />
+          <input type="radio" id="mergeyes" name="merge" value="yes" checked={this.state.merge} onChange={this.handleInputChange}>
           </input>{this.props.text['text_merge']}
           <input type="radio" id="mergeno" name="merge" value="no" checked={!this.state.merge} onChange={this.handleInputChange}>
           </input>{this.props.text['text_replace']}
