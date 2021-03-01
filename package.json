@@ -15,7 +15,7 @@
 						"@marcoparrone/iconbutton": "^1.0.1",
 						"@marcoparrone/nodes": "^1.0.4",
 						"@marcoparrone/react-language-selector": "^1.0.6",
-						"@marcoparrone/react-nodes": "^1.0.5",
+						"@marcoparrone/react-nodes": "^1.0.7",
 						"@types/classnames": "^2.2.11",
 						"@types/node": "^14.14.16",
 						"@types/react": "^17.0.0",

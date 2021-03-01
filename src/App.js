@@ -29,6 +29,7 @@ class NodesApp extends React.Component {
     this.showedit = 'no';
     this.showmove = 'no';
     this.showadd = 'yes';
+    this.expandbydefault = 'yes';
     this.i18n = { language: 'en', text: defaultText};
 
     this.deleteNode = this.deleteNode.bind(this);
@@ -51,12 +52,13 @@ class NodesApp extends React.Component {
     this.EditDialogRef = React.createRef();
     this.SettingsDialogRef = React.createRef();
   }
-
+  
   componentDidMount() {
     let showedit = localStorage.getItem('bookmarks_showedit');
     let showmove = localStorage.getItem('bookmarks_showmove');
     let showadd = localStorage.getItem('bookmarks_showadd');
-    
+    let expandbydefault = localStorage.getItem('bookmarks_expandbydefault');
+
     if (showedit === 'yes' || showedit === 'no') {
       this.showedit = showedit;
     }
@@ -65,6 +67,9 @@ class NodesApp extends React.Component {
     }
     if (showadd === 'yes' || showadd === 'no') {
       this.showadd = showadd;
+    }
+    if (expandbydefault === 'yes' || expandbydefault === 'no') {
+      this.expandbydefault = expandbydefault;
     }
 
     // Localize the User Interface.
@@ -86,7 +91,7 @@ class NodesApp extends React.Component {
     this.saveNodes();
   }
 
-  handleSettingsChange(showedit, showmove, showadd, language) {
+  handleSettingsChange(showedit, showmove, showadd, language, expandbydefault) {
     let toupdate = false;
     if (this.showedit !== showedit) {
       this.showedit=showedit;
@@ -101,6 +106,11 @@ class NodesApp extends React.Component {
     if (this.showadd !== showadd) {
       this.showadd=showadd;
       localStorage.setItem('bookmarks_showadd', showadd);
+      toupdate = true;
+    }
+    if (this.expandbydefault !== expandbydefault) {
+      this.expandbydefault=expandbydefault;
+      localStorage.setItem('bookmarks_expandbydefault', expandbydefault);
       toupdate = true;
     }
     if (this.i18n.language !== language) {
@@ -150,7 +160,7 @@ class NodesApp extends React.Component {
   }
 
   openSettings() {
-    this.SettingsDialogRef.current.updateState(this.showedit, this.showmove, this.showadd, this.i18n.language);
+    this.SettingsDialogRef.current.updateState(this.showedit, this.showmove, this.showadd, this.i18n.language, this.expandbydefault);
     open_dialog(this.bookmarksListRef, 'settings');
   }
 
@@ -273,12 +283,12 @@ class NodesApp extends React.Component {
               {label: this.i18n.text['text_help_label'], icon: 'help', callback: () => open_dialog(this.bookmarksListRef, 'help')},
               {label: this.i18n.text['text_about_label'], icon: 'info', callback: () =>  open_dialog(this.bookmarksListRef, 'about')}]} >
           <NodesArray key="NodesArray" ref={this.NodesArrayRef} item="bookmarks" text={this.i18n.text}
-            nodes={this.bookmarks} showedit={this.showedit} showmove={this.showmove} showadd={this.showadd}
+            nodes={this.bookmarks} showedit={this.showedit} showmove={this.showmove} showadd={this.showadd} expanded={this.expandbydefault === 'yes' ? true : false}
             addNode={this.addNode} openNode={this.openNode} editNode={this.editNode} />
           <EditDialog id="EditDialog" ref={this.EditDialogRef} text={this.i18n.text}
            deleteNode={this.deleteNode} handleSubmit={this.handleSubmit} />
           <SettingsDialog id="SettingsDialog" ref={this.SettingsDialogRef} text={this.i18n.text}
-           showedit={this.showedit} showmove={this.showmove} showadd={this.showadd} language={this.i18n.language} 
+           showedit={this.showedit} showmove={this.showmove} showadd={this.showadd} language={this.i18n.language} expandbydefault={this.expandbydefault}
            handleSettingsChange={this.handleSettingsChange} />
           <ImpExpDialog id="ImpExpDialog" text={this.i18n.text} exportNodes={this.exportNodes} importNodes={this.importNodes} />
           <Dialog id="help" title={this.i18n.text['text_help_title']} text_close_button={this.i18n.text['text_close_button']} >
