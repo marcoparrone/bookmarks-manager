@@ -26,7 +26,7 @@ class NodesApp extends React.Component {
   constructor(props) {
     super(props);
     this.bookmarks = [];
-    this.showedit = 'no';
+    this.showedit = 'yes';
     this.showmove = 'no';
     this.showadd = 'yes';
     this.expandbydefault = 'yes';
