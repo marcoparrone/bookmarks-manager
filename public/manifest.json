@@ -12,12 +12,12 @@
 	{ "src": "favicon.ico", "sizes": "64x64", "type": "image/x-icon" }
     ],
     "lang": "en-US",
-    "start_url": "https://bookmarks.marcoparrone.com",
+    "start_url": "https://marcoparrone.github.io/bookmarks",
     "display": "standalone",
     "orientation": "any",
     "theme_color": "#000000",
     "background_color": "#ffffff",
-    "scope": "https://bookmarks.marcoparrone.com",
+    "scope": "https://marcoparrone.github.io/bookmarks",
     "categories":  ["productivity", "tools"],
     "screenshots" : [
         {

@@ -1,7 +1,7 @@
 {
 			"name": "bookmarks-manager",
 			"version": "0.1.0",
-			"homepage": "https://bookmarks.marcoparrone.com",
+			"homepage": "https://marcoparrone.github.io/bookmarks",
 			"private": true,
 			"bugs": {
 						"url": "https://github.com/marcoparrone/bookmarks-manager/issues",
@@ -22,7 +22,6 @@
 						"@types/react-dom": "^17.0.0",
 						"bookmarks-parser": "^1.5.0",
 						"file-saver": "^2.0.5",
-						"firebase-tools": "^9.6.1",
 						"patch-package": "^6.2.2",
 						"react": "^17.0.1",
 						"react-dom": "^17.0.1",
@@ -31,7 +30,7 @@
 			},
 			"scripts": {
 						"predeploy": "npm run build",
-						"deploy": "firebase deploy",
+						"deploy": "mydeploy.sh bookmarks",
 						"start": "react-scripts start",
 						"build": "react-scripts build",
 						"test": "react-scripts test",
@@ -56,13 +55,7 @@
 			"devDependencies": {
 						"@marcoparrone/translate-json": "^1.0.6",
 						"@types/file-saver": "^2.0.1",
-						"clean-webpack-plugin": "^3.0.0",
-						"html-webpack-plugin": "^4.5.0",
 						"mocha": "^8.2.1",
-						"should": "^13.2.3",
-						"webpack-cli": "^4.3.0",
-						"webpack-dev-server": "^3.11.0",
-						"webpack-merge": "^5.7.3",
-						"workbox-webpack-plugin": "^6.0.2"
+						"should": "^13.2.3"
 			}
 }
